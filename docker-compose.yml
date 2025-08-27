@@ -1,0 +1,79 @@
+version: '3.8'
+
+services:
+  postgres:
+    image: postgres:16-alpine
+    container_name: filmroom-postgres
+    environment:
+      POSTGRES_USER: filmroom
+      POSTGRES_PASSWORD: filmroom
+      POSTGRES_DB: filmroom_db
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U filmroom -d filmroom_db"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  redis:
+    image: redis:7-alpine
+    container_name: filmroom-redis
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  livekit:
+    image: livekit/livekit-server:latest
+    container_name: filmroom-livekit
+    ports:
+      - "7880:7880"  # WebRTC
+      - "7881:7881"  # TCP
+      - "7882:7882/udp"  # UDP
+    environment:
+      LIVEKIT_KEYS: "devkey: secret"
+      LIVEKIT_CONFIG: |
+        port: 7880
+        rtc:
+          tcp_port: 7881
+          port_range_start: 50000
+          port_range_end: 60000
+          use_external_ip: false
+        redis:
+          address: redis:6379
+        webhook:
+          api_key: devkey
+          api_secret: secret
+    depends_on:
+      - redis
+    command: --dev --node-ip=127.0.0.1
+
+  # Optional: pgAdmin for database management
+  pgadmin:
+    image: dpage/pgadmin4:latest
+    container_name: filmroom-pgadmin
+    environment:
+      PGADMIN_DEFAULT_EMAIL: admin@thefilmroom.com
+      PGADMIN_DEFAULT_PASSWORD: admin
+      PGADMIN_CONFIG_SERVER_MODE: 'False'
+    ports:
+      - "5050:80"
+    volumes:
+      - pgadmin_data:/var/lib/pgadmin
+    depends_on:
+      - postgres
+    profiles:
+      - tools
+
+volumes:
+  postgres_data:
+  redis_data:
+  pgadmin_data:
