@@ -1,0 +1,96 @@
+{
+  "$schema": "https://flightcontrol.dev/schema.json",
+  "environments": [
+    {
+      "id": "production",
+      "name": "Production Environment", 
+      "region": "us-east-1",
+      "source": {
+        "branch": "main"
+      },
+      "services": [
+        {
+          "id": "postgres",
+          "name": "PostgreSQL Database",
+          "type": "rds",
+          "engine": "postgres",
+          "engineVersion": "15.6",
+          "instanceSize": "db.t4g.micro",
+          "storage": 20,
+          "private": true,
+          "deletionProtection": false
+        },
+        {
+          "id": "backend",
+          "name": "Backend API",
+          "type": "web",
+          "buildType": "nixpacks",
+          "source": {
+            "directory": "/backend"
+          },
+          "target": {
+            "type": "fargate"
+          },
+          "ci": {
+            "type": "ec2"
+          },
+          "cpu": 0.5,
+          "memory": 2,
+          "port": 8000,
+          "healthCheckPath": "/health",
+          "buildCommand": "pip install uv && uv venv && uv pip install -e .",
+          "startCommand": "python src/main.py",
+          "minInstances": 1,
+          "maxInstances": 3,
+          "environmentVariables": {
+            "DATABASE_URL": {
+              "fromService": {
+                "id": "postgres",
+                "value": "connectionString"
+              }
+            },
+            "APP_ENV": "production",
+            
+            "CORS_ORIGINS": {
+              "fromService": {
+                "id": "frontend",
+                "value": "url"
+              }
+            }
+          }
+        },
+        {
+          "id": "frontend",
+          "name": "Frontend Web App",
+          "type": "web",
+          "buildType": "nixpacks",
+          "source": {
+            "directory": "/frontend"
+          },
+          "target": {
+            "type": "fargate"
+          },
+          "ci": {
+            "type": "ec2"
+          },
+          "cpu": 0.5,
+          "memory": 2,
+          "port": 3000,
+          "buildCommand": "pnpm build",
+          "startCommand": "pnpm start",
+          "minInstances": 1,
+          "maxInstances": 3,
+          "environmentVariables": {
+            "NEXT_PUBLIC_API_URL": {
+              "fromService": {
+                "id": "backend",
+                "value": "url"
+              }
+            }
+           
+          }
+        }
+      ]
+    }
+  ]
+}

@@ -145,4 +145,5 @@ if __name__ == "__main__":
         port=settings.api_port,
         reload=settings.is_development,
         log_level=settings.log_level.lower(),
+        workers=1 if settings.is_development else 4,
     )
