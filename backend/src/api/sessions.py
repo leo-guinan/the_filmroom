@@ -3,9 +3,11 @@ from pydantic import BaseModel, Field
 from typing import List, Optional, Dict, Any
 from datetime import datetime
 from enum import Enum
+from sqlalchemy.orm import Session
 
 from core import get_logger
-from .auth import oauth2_scheme
+from models import get_db, User
+from services.auth import get_current_active_user
 
 router = APIRouter()
 logger = get_logger(__name__)
@@ -67,7 +69,8 @@ class SessionInsights(BaseModel):
 @router.post("/", response_model=SessionResponse, status_code=status.HTTP_201_CREATED)
 async def create_session(
     session_data: SessionCreate,
-    token: str = Depends(oauth2_scheme)
+    current_user: User = Depends(get_current_active_user),
+    db: Session = Depends(get_db)
 ):
     """Create a new coaching session."""
     # TODO: Implement session creation
@@ -98,7 +101,8 @@ async def list_sessions(
     status: Optional[SessionStatus] = None,
     skip: int = 0,
     limit: int = 20,
-    token: str = Depends(oauth2_scheme)
+    current_user: User = Depends(get_current_active_user),
+    db: Session = Depends(get_db)
 ):
     """List coaching sessions."""
     # TODO: Implement session listing
@@ -108,7 +112,8 @@ async def list_sessions(
 @router.get("/{session_id}", response_model=SessionResponse)
 async def get_session(
     session_id: str,
-    token: str = Depends(oauth2_scheme)
+    current_user: User = Depends(get_current_active_user),
+    db: Session = Depends(get_db)
 ):
     """Get session details."""
     # TODO: Implement session retrieval
@@ -121,7 +126,8 @@ async def get_session(
 @router.post("/{session_id}/join", response_model=SessionJoinResponse)
 async def join_session(
     session_id: str,
-    token: str = Depends(oauth2_scheme)
+    current_user: User = Depends(get_current_active_user),
+    db: Session = Depends(get_db)
 ):
     """Join a video session and get LiveKit token."""
     # TODO: Implement LiveKit room creation and token generation
@@ -138,7 +144,8 @@ async def join_session(
 @router.post("/{session_id}/end", response_model=SessionResponse)
 async def end_session(
     session_id: str,
-    token: str = Depends(oauth2_scheme)
+    current_user: User = Depends(get_current_active_user),
+    db: Session = Depends(get_db)
 ):
     """End a video session."""
     # TODO: Implement session ending
@@ -153,7 +160,8 @@ async def end_session(
 @router.get("/{session_id}/transcription", response_model=TranscriptionResponse)
 async def get_transcription(
     session_id: str,
-    token: str = Depends(oauth2_scheme)
+    current_user: User = Depends(get_current_active_user),
+    db: Session = Depends(get_db)
 ):
     """Get session transcription."""
     # TODO: Implement transcription retrieval
@@ -166,7 +174,8 @@ async def get_transcription(
 @router.get("/{session_id}/insights", response_model=SessionInsights)
 async def get_insights(
     session_id: str,
-    token: str = Depends(oauth2_scheme)
+    current_user: User = Depends(get_current_active_user),
+    db: Session = Depends(get_db)
 ):
     """Get AI-generated insights for a session."""
     # TODO: Implement insights retrieval
@@ -179,7 +188,8 @@ async def get_insights(
 @router.delete("/{session_id}", status_code=status.HTTP_204_NO_CONTENT)
 async def cancel_session(
     session_id: str,
-    token: str = Depends(oauth2_scheme)
+    current_user: User = Depends(get_current_active_user),
+    db: Session = Depends(get_db)
 ):
     """Cancel a scheduled session."""
     # TODO: Implement session cancellation
