@@ -28,6 +28,6 @@
     "tailwindcss": "^4",
     "typescript": "^5"
   },
-  "packageManager": "pnpm@latest"
+  "packageManager": "pnpm@9.15.2"
 
 }
