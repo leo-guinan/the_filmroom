@@ -5,6 +5,7 @@ from contextlib import asynccontextmanager
 import uuid
 import time
 from typing import AsyncGenerator
+import os
 
 from core import settings, setup_logging, get_logger
 from api import health_router, auth_router, users_router, sessions_router
@@ -45,13 +46,24 @@ app = FastAPI(
     debug=settings.debug,
 )
 
+# Parse CORS origins from environment or settings
+cors_origins = os.getenv('CORS_ORIGINS', '')
+if cors_origins:
+    # If CORS_ORIGINS env var is set, use it
+    allowed_origins = [origin.strip() for origin in cors_origins.split(',')]
+else:
+    # Otherwise use settings
+    allowed_origins = settings.cors_origins
+
+logger.info(f"CORS Origins configured: {allowed_origins}")
+
 # CORS middleware - must be added before other middleware
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=settings.cors_origins if settings.cors_origins else ["*"],
-    allow_credentials=settings.cors_allow_credentials,
-    allow_methods=settings.cors_allow_methods,
-    allow_headers=settings.cors_allow_headers,
+    allow_origins=allowed_origins,
+    allow_credentials=True,
+    allow_methods=["GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH"],
+    allow_headers=["*"],
     expose_headers=["*"],
 )
 

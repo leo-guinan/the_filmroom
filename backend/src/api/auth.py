@@ -17,8 +17,9 @@ logger = get_logger(__name__)
 class UserRegister(BaseModel):
     email: EmailStr
     password: str = Field(..., min_length=8)
-    full_name: str
-    role: str = Field(default="client", pattern="^(coach|client)$")
+    first_name: str
+    last_name: str
+    role: str = Field(default="CLIENT", pattern="^(COACH|CLIENT|coach|client)$")
 
 
 class UserLogin(BaseModel):
@@ -31,6 +32,7 @@ class Token(BaseModel):
     refresh_token: str
     token_type: str = "bearer"
     expires_in: int
+    user: Optional[dict] = None
 
 
 class TokenRefresh(BaseModel):
@@ -41,6 +43,8 @@ class UserResponse(BaseModel):
     id: str
     email: str
     full_name: str
+    first_name: str
+    last_name: str
     role: str
     is_active: bool
     is_verified: bool
@@ -58,14 +62,18 @@ async def register(
     """Register a new user."""
     try:
         # Convert role string to enum
-        role = UserRole.COACH if user_data.role == "coach" else UserRole.CLIENT
+        role_str = user_data.role.upper()
+        role = UserRole.COACH if role_str == "COACH" else UserRole.CLIENT
+        
+        # Combine first and last name for full_name
+        full_name = f"{user_data.first_name} {user_data.last_name}"
         
         # Create user
         user = AuthService.create_user(
             db=db,
             email=user_data.email,
             password=user_data.password,
-            full_name=user_data.full_name,
+            full_name=full_name,
             role=role
         )
         
@@ -75,11 +83,25 @@ async def register(
         
         logger.info(f"User registered: {user.email} with role {role}")
         
+        # Extract first and last name from full_name
+        name_parts = full_name.split(' ', 1)
+        first_name = name_parts[0]
+        last_name = name_parts[1] if len(name_parts) > 1 else ""
+        
         return {
             "access_token": access_token,
             "refresh_token": refresh_token,
             "token_type": "bearer",
             "expires_in": settings.jwt_expiration_hours * 3600,
+            "user": {
+                "id": str(user.id),
+                "email": user.email,
+                "first_name": first_name,
+                "last_name": last_name,
+                "role": role.value,
+                "is_active": user.is_active,
+                "is_verified": user.is_verified
+            }
         }
     except HTTPException:
         raise
@@ -118,11 +140,25 @@ async def login(
     
     logger.info(f"User logged in: {user.email}")
     
+    # Extract first and last name from full_name
+    name_parts = user.full_name.split(' ', 1) if user.full_name else ["", ""]
+    first_name = name_parts[0]
+    last_name = name_parts[1] if len(name_parts) > 1 else ""
+    
     return {
         "access_token": access_token,
         "refresh_token": refresh_token,
         "token_type": "bearer",
         "expires_in": settings.jwt_expiration_hours * 3600,
+        "user": {
+            "id": str(user.id),
+            "email": user.email,
+            "first_name": first_name,
+            "last_name": last_name,
+            "role": user.role.value if hasattr(user.role, 'value') else user.role,
+            "is_active": user.is_active,
+            "is_verified": user.is_verified
+        }
     }
 
 
