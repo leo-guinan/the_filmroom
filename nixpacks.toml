@@ -1,19 +1,14 @@
 # Nixpacks configuration for monorepo
 # This configures both Node.js and Python environments
-providers = ["...", "python"]
 
 [phases.setup]
-nixPkgs = ["python311", "nodejs_20", "postgresql"]
-aptPkgs = ["python3-pip", "python3-venv", "build-essential", "python3-dev", "libpq-dev"]
-
-
+# Install both Node.js and Python packages
+nixPkgs = ["nodejs_20", "python311", "postgresql"]
+aptPkgs = ["build-essential", "libpq-dev"]
 
 [phases.install]
 # Install dependencies for both Node and Python
 cmds = [
-    "python3 -m ensurepip",
-    "python3 -m pip install --upgrade pip setuptools wheel",
-    "python3 -m pip install uv",
     "corepack enable",
     "corepack prepare pnpm@9.15.2 --activate", 
     "pnpm install --frozen-lockfile"
