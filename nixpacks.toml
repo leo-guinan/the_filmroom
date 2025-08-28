@@ -3,7 +3,7 @@
 
 [phases.setup]
 # Install both Node.js and Python packages with pip and venv
-nixPkgs = ["bash", "nodejs_20", "python311", "python311Packages.pip", "python311Packages.setuptools", "python311Packages.wheel", "python311Packages.virtualenv", "postgresql"]
+nixPkgs = ["bash", "coreutils", "gnused", "findutils", "nodejs_20", "python311", "python311Packages.pip", "python311Packages.setuptools", "python311Packages.wheel", "python311Packages.virtualenv", "postgresql"]
 aptPkgs = ["build-essential", "libpq-dev"]
 
 [phases.install]
