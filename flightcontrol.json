@@ -50,13 +50,7 @@
               }
             },
             "APP_ENV": "production",
-            
-            "CORS_ORIGINS": {
-              "fromService": {
-                "id": "frontend",
-                "value": "url"
-              }
-            }
+            "CORS_ORIGINS": "https://d2i2sf9vq7cc6e.cloudfront.net,https://thefilmroom.com,http://localhost:3000"
           }
         },
         {
