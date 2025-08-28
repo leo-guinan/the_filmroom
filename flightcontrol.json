@@ -26,7 +26,7 @@
           "type": "web",
           "buildType": "nixpacks",
           "source": {
-            "path": "/backend"
+            "path": "/"
           },
           "target": {
             "type": "fargate"
@@ -65,7 +65,7 @@
           "type": "web",
           "buildType": "nixpacks",
           "source": {
-            "path": "/frontend"
+            "path": "/"
           },
           "target": {
             "type": "fargate"
@@ -76,8 +76,8 @@
           "cpu": 0.5,
           "memory": 2,
           "port": 3000,
-          "buildCommand": "npm install -g pnpm && pnpm install --frozen-lockfile && pnpm build",
-          "startCommand": "pnpm start",
+          "buildCommand": "npm install -g pnpm && pnpm install --frozen-lockfile && pnpm run build --filter=@the-filmroom/frontend",
+          "startCommand": "cd frontend && pnpm start",
           "minInstances": 1,
           "maxInstances": 3,
           "environmentVariables": {

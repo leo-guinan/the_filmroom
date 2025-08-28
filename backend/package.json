@@ -1,0 +1,12 @@
+{
+  "name": "@the-filmroom/backend",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "python src/main.py",
+    "build": "echo 'Backend build complete'",
+    "lint": "ruff check .",
+    "format": "ruff format .",
+    "test": "pytest"
+  }
+}
