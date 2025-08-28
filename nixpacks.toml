@@ -1,0 +1,33 @@
+# Nixpacks configuration for monorepo
+# This configures both Node.js and Python environments
+
+[phases.setup]
+nixPkgs = ["python311", "nodejs_20", "postgresql"]
+aptPkgs = ["python3-pip", "python3-venv", "build-essential", "python3-dev", "libpq-dev"]
+
+[providers]
+# Enable both Node and Python providers for monorepo
+node = true
+python = true
+
+[phases.install]
+# Install dependencies for both Node and Python
+cmds = [
+    "python3 -m ensurepip",
+    "python3 -m pip install --upgrade pip setuptools wheel",
+    "python3 -m pip install uv",
+    "corepack enable",
+    "corepack prepare pnpm@9.15.2 --activate", 
+    "pnpm install --frozen-lockfile"
+]
+
+[phases.build]
+dependsOn = ["install"]
+
+[start]
+# This will be overridden by service-specific commands in flightcontrol.json
+cmd = "echo 'Start command should be specified in flightcontrol.json'"
+
+[variables]
+NIXPACKS_PYTHON_VERSION = "3.11"
+NIXPACKS_NODE_VERSION = "20"

@@ -38,8 +38,8 @@
           "memory": 2,
           "port": 8000,
           "healthCheckPath": "/health",
-          "buildCommand": "cd backend && pip install -e .",
-          "startCommand": "cd backend && uvicorn src.main:app --host 0.0.0.0 --port 8000",
+          "buildCommand": "cd backend && python3 -m pip install -e .",
+          "startCommand": "cd backend && python3 -m uvicorn src.main:app --host 0.0.0.0 --port 8000",
           "minInstances": 1,
           "maxInstances": 3,
           "environmentVariables": {
