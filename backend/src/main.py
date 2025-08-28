@@ -147,6 +147,20 @@ async def internal_error_handler(request: Request, exc):
     )
 
 
+# Add a catch-all OPTIONS handler BEFORE including routers
+@app.options("/{path:path}")
+async def options_handler(path: str):
+    """Handle all OPTIONS requests."""
+    return JSONResponse(
+        status_code=200,
+        headers={
+            "Access-Control-Allow-Origin": "*",
+            "Access-Control-Allow-Methods": "GET, POST, PUT, DELETE, OPTIONS, PATCH",
+            "Access-Control-Allow-Headers": "*",
+            "Access-Control-Max-Age": "3600",
+        }
+    )
+
 # Include routers
 app.include_router(health_router, tags=["health"])
 app.include_router(auth_router, prefix=f"/api/{settings.api_version}/auth", tags=["auth"])
