@@ -37,7 +37,7 @@ class Settings(BaseSettings):
         default=["http://localhost:3000", "http://localhost:3001"]
     )
     cors_allow_credentials: bool = Field(default=True)
-    cors_allow_methods: List[str] = Field(default=["*"])
+    cors_allow_methods: List[str] = Field(default=["GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH"])
     cors_allow_headers: List[str] = Field(default=["*"])
     
     # LiveKit
