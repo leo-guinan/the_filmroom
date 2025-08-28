@@ -2,16 +2,16 @@
 # This configures both Node.js and Python environments
 
 [phases.setup]
-# Install both Node.js and Python packages
-nixPkgs = ["nodejs_20", "python311", "python311Packages.pip", "postgresql"]
+# Install both Node.js and Python packages with pip and venv
+nixPkgs = ["nodejs_20", "python311", "python311Packages.pip", "python311Packages.setuptools", "python311Packages.wheel", "python311Packages.virtualenv", "postgresql"]
 aptPkgs = ["build-essential", "libpq-dev"]
 
 [phases.install]
 # Install dependencies for both Node and Python
 cmds = [
-    # Ensure pip is available
-    "python3 -m ensurepip --default-pip || true",
-    "python3 -m pip install --upgrade pip setuptools wheel || pip3 install --upgrade pip setuptools wheel",
+    # Create Python virtual environment for backend
+    "python3 -m venv /opt/venv",
+    ". /opt/venv/bin/activate && pip install --upgrade pip setuptools wheel",
     # Setup Node/pnpm
     "corepack enable",
     "corepack prepare pnpm@9.15.2 --activate", 
@@ -28,3 +28,5 @@ cmd = "echo 'Start command should be specified in flightcontrol.json'"
 [variables]
 NIXPACKS_PYTHON_VERSION = "3.11"
 NIXPACKS_NODE_VERSION = "20"
+# Add venv to PATH
+PATH = "/opt/venv/bin:$PATH"
