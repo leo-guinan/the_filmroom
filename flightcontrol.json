@@ -76,8 +76,8 @@
           "cpu": 0.5,
           "memory": 2,
           "port": 3000,
-          "buildCommand": "pnpm install --frozen-lockfile && cd frontend && node ../node_modules/.bin/next build",
-          "startCommand": "cd frontend && node ../node_modules/.bin/next start",
+          "buildCommand": "pnpm install --frozen-lockfile && cd frontend && pnpm exec next build",
+          "startCommand": "cd frontend && pnpm exec next start",
           "minInstances": 1,
           "maxInstances": 3,
           "environmentVariables": {
