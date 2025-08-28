@@ -1,14 +1,12 @@
 # Nixpacks configuration for monorepo
 # This configures both Node.js and Python environments
+providers = ["...", "python"]
 
 [phases.setup]
 nixPkgs = ["python311", "nodejs_20", "postgresql"]
 aptPkgs = ["python3-pip", "python3-venv", "build-essential", "python3-dev", "libpq-dev"]
 
-[providers]
-# Enable both Node and Python providers for monorepo
-node = true
-python = true
+
 
 [phases.install]
 # Install dependencies for both Node and Python

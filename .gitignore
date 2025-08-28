@@ -11,3 +11,4 @@
 .env.production
 
 .venv   
+node_modules
