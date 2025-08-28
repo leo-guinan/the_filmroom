@@ -113,6 +113,8 @@ Approximate monthly costs (AWS pricing):
 - Check all environment variables are set in Parameter Store
 - Verify Python dependencies are in `pyproject.toml`
 - Check deployment logs for import errors
+- Ensure nixpacks.toml is properly configured
+- Check that Procfile exists with correct start command
 
 #### Frontend can't connect to backend
 - Verify `NEXT_PUBLIC_API_URL` is being injected correctly
