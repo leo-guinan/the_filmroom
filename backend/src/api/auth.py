@@ -1,5 +1,6 @@
 from fastapi import APIRouter, HTTPException, Depends, status
 from fastapi.security import OAuth2PasswordRequestForm
+from fastapi.responses import Response
 from pydantic import BaseModel, EmailStr, Field
 from typing import Optional
 from datetime import datetime, timedelta
@@ -52,6 +53,18 @@ class UserResponse(BaseModel):
     
     class Config:
         from_attributes = True
+
+
+@router.options("/register")
+async def register_options():
+    """Handle OPTIONS request for register endpoint."""
+    return Response(status_code=200)
+
+
+@router.options("/login")
+async def login_options():
+    """Handle OPTIONS request for login endpoint."""
+    return Response(status_code=200)
 
 
 @router.post("/register", response_model=Token, status_code=status.HTTP_201_CREATED)

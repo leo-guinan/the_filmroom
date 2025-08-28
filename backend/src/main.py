@@ -55,14 +55,29 @@ else:
     # Otherwise use settings
     allowed_origins = settings.cors_origins
 
+# In production, ensure we have the CloudFront domains
+if settings.app_env == "production":
+    # Add all possible frontend origins
+    production_origins = [
+        "https://d2i2sf9vq7cc6e.cloudfront.net",
+        "https://d1wbmmojehnr8o.cloudfront.net", 
+        "https://thefilmroom.com",
+        "http://localhost:3000"
+    ]
+    # Merge with configured origins
+    for origin in production_origins:
+        if origin not in allowed_origins:
+            allowed_origins.append(origin)
+
 logger.info(f"CORS Origins configured: {allowed_origins}")
 
 # CORS middleware - must be added before other middleware
+# Note: When allow_credentials is True, we cannot use "*" for origins
 app.add_middleware(
     CORSMiddleware,
     allow_origins=allowed_origins,
-    allow_credentials=True,
-    allow_methods=["GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH"],
+    allow_credentials=False,  # Set to False to allow wildcard methods
+    allow_methods=["*"],
     allow_headers=["*"],
     expose_headers=["*"],
 )
