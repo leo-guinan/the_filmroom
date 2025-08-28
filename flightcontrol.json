@@ -14,7 +14,7 @@
           "name": "PostgreSQL Database",
           "type": "rds",
           "engine": "postgres",
-          "engineVersion": "15.6",
+          "engineVersion": "16",
           "instanceSize": "db.t4g.micro",
           "storage": 20,
           "private": true,
