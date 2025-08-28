@@ -15,7 +15,9 @@ cmds = [
     # Setup Node/pnpm
     "corepack enable",
     "corepack prepare pnpm@9.15.2 --activate", 
-    "pnpm install --frozen-lockfile"
+    "pnpm install --frozen-lockfile",
+    # Install Turbo globally for build commands
+    "pnpm add -g turbo"
 ]
 
 [phases.build]
