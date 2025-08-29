@@ -83,13 +83,37 @@ app.add_middleware(
 )
 
 
-# Add CORS headers middleware
+# Add CORS headers middleware with OPTIONS handling
 @app.middleware("http")
 async def add_cors_headers(request: Request, call_next):
-    """Ensure CORS headers are added to all responses."""
+    """Ensure CORS headers are added to all responses and handle OPTIONS."""
     origin = request.headers.get("origin")
     
-    # Process the request
+    # Handle OPTIONS requests directly
+    if request.method == "OPTIONS":
+        allowed_origins = [
+            "https://filmroom.leoasaservice.com",
+            "https://coachapi.leoasaservice.com",
+            "https://d2i2sf9vq7cc6e.cloudfront.net",
+            "https://d1wbmmojehnr8o.cloudfront.net",
+            "http://localhost:3000"
+        ]
+        
+        headers = {
+            "Access-Control-Allow-Methods": "GET, POST, PUT, DELETE, OPTIONS, PATCH",
+            "Access-Control-Allow-Headers": "Content-Type, Authorization, Accept, Origin, X-Requested-With",
+            "Access-Control-Max-Age": "3600",
+            "Access-Control-Allow-Credentials": "true"
+        }
+        
+        if origin in allowed_origins:
+            headers["Access-Control-Allow-Origin"] = origin
+        else:
+            headers["Access-Control-Allow-Origin"] = "https://filmroom.leoasaservice.com"
+            
+        return JSONResponse(status_code=200, content={}, headers=headers)
+    
+    # Process non-OPTIONS requests
     response = await call_next(request)
     
     # Add CORS headers if origin is present
@@ -173,38 +197,6 @@ async def internal_error_handler(request: Request, exc):
         },
     )
 
-
-# Add a catch-all OPTIONS handler BEFORE including routers
-@app.options("/{path:path}")
-async def options_handler(request: Request, path: str):
-    """Handle all OPTIONS requests."""
-    origin = request.headers.get("origin", "*")
-    
-    # List of allowed origins
-    allowed_origins = [
-        "https://filmroom.leoasaservice.com",
-        "https://coachapi.leoasaservice.com",
-        "https://d2i2sf9vq7cc6e.cloudfront.net",
-        "https://d1wbmmojehnr8o.cloudfront.net",
-        "http://localhost:3000"
-    ]
-    
-    # Check if origin is allowed
-    if origin in allowed_origins:
-        response_origin = origin
-    else:
-        response_origin = "https://filmroom.leoasaservice.com"  # Default to main frontend
-    
-    return JSONResponse(
-        status_code=200,
-        headers={
-            "Access-Control-Allow-Origin": response_origin,
-            "Access-Control-Allow-Methods": "GET, POST, PUT, DELETE, OPTIONS, PATCH",
-            "Access-Control-Allow-Headers": "Content-Type, Authorization, Accept, Origin, X-Requested-With",
-            "Access-Control-Allow-Credentials": "true",
-            "Access-Control-Max-Age": "3600",
-        }
-    )
 
 # Include routers
 app.include_router(health_router, tags=["health"])
