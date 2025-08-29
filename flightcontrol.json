@@ -11,7 +11,7 @@
       "services": [
         {
           "id": "postgres",
-          "name": "PostgreSQL Database",
+          "name": "postgres",
           "type": "rds",
           "engine": "postgres",
           "engineVersion": "16",
@@ -49,7 +49,7 @@
               "name": "coachapi.leoasaservice.com"
             }
           ],
-          "environmentVariables": {
+          "envVariables": {
             "DATABASE_URL": {
               "fromService": {
                 "id": "postgres",
