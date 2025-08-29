@@ -30,9 +30,12 @@ export default function VideoRoom({ token, serverUrl, roomName }: VideoRoomProps
   }
 
   // Ensure we have the proper WebSocket URL format
+  // Use ws:// for localhost, wss:// for production
   const wsUrl = serverUrl.startsWith('ws://') || serverUrl.startsWith('wss://') 
     ? serverUrl 
-    : `wss://${serverUrl}`
+    : serverUrl.includes('localhost') || serverUrl.includes('127.0.0.1')
+      ? `ws://${serverUrl}`
+      : `wss://${serverUrl}`
 
   return (
     <div className="h-screen bg-neutral-950 relative">

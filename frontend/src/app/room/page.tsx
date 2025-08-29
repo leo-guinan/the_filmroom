@@ -73,6 +73,7 @@ function RoomContent() {
       }
 
       const data = await response.json()
+      console.log('LiveKit response:', data)
       
       setToken(data.token)
       setServerUrl(data.url)
@@ -115,6 +116,7 @@ function RoomContent() {
   }
 
   if (!token || !serverUrl) {
+    console.log('Room not ready - token:', token, 'serverUrl:', serverUrl)
     return (
       <div className="min-h-screen bg-neutral-950 flex items-center justify-center">
         <div className="text-center">
