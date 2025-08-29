@@ -1,5 +1,6 @@
 from logging.config import fileConfig
 import sys
+import os
 from pathlib import Path
 
 from sqlalchemy import engine_from_config
@@ -18,8 +19,9 @@ from src.models import Base
 # access to the values within the .ini file in use.
 config = context.config
 
-# Override the sqlalchemy.url with our settings
-config.set_main_option("sqlalchemy.url", settings.database_url)
+# Override the sqlalchemy.url with our settings or environment variable
+database_url = os.getenv("DATABASE_URL") or settings.database_url
+config.set_main_option("sqlalchemy.url", database_url)
 
 # Interpret the config file for Python logging.
 # This line sets up loggers basically.

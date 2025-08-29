@@ -17,8 +17,10 @@
           "engineVersion": "16",
           "instanceSize": "db.t4g.micro",
           "storage": 20,
-          "private": true,
-          "deletionProtection": false
+          "private": false,
+          "deletionProtection": false,
+          "databaseName": "filmroom_db",
+          "databaseUser": "filmroom"
         },
         {
           "id": "backend",
@@ -38,8 +40,8 @@
           "memory": 2,
           "port": 8000,
           "healthCheckPath": "/health",
-          "buildCommand": "cd backend && /opt/venv/bin/pip install -e .",
-          "startCommand": "cd backend && PYTHONPATH=/app/backend/src /opt/venv/bin/uvicorn main:app --host 0.0.0.0 --port 8000",
+          "buildCommand": "cd backend && /opt/venv/bin/pip install -e . && chmod +x startup.sh",
+          "startCommand": "/app/backend/startup.sh",
           "minInstances": 1,
           "maxInstances": 3,
           "customDomains": [

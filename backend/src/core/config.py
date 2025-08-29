@@ -88,3 +88,10 @@ class Settings(BaseSettings):
 
 
 settings = Settings()
+
+# Debug logging for database configuration
+import os
+if os.getenv("DATABASE_URL"):
+    print(f"DATABASE_URL environment variable found: {os.getenv('DATABASE_URL').split('@')[1] if '@' in os.getenv('DATABASE_URL') else 'invalid format'}")
+else:
+    print(f"DATABASE_URL not found in environment, using default: {settings.database_url.split('@')[1] if '@' in settings.database_url else settings.database_url}")
