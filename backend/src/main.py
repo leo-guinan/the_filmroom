@@ -24,6 +24,7 @@ async def lifespan(app: FastAPI) -> AsyncGenerator:
         app_name=settings.app_name,
         environment=settings.app_env,
         debug=settings.debug,
+        database_configured=bool(os.getenv("DATABASE_URL")),
     )
     
     # TODO: Initialize database connection pool

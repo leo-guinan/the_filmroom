@@ -6,11 +6,14 @@ from sqlalchemy.pool import NullPool
 from contextlib import contextmanager
 
 from core import settings, get_logger
+import os
 
 logger = get_logger(__name__)
 
 # Database URL configuration
-DATABASE_URL = settings.database_url
+# Try to get from environment first, then fall back to settings
+DATABASE_URL = os.getenv("DATABASE_URL") or settings.database_url
+logger.info(f"Database URL configured: {DATABASE_URL.split('@')[1] if '@' in DATABASE_URL else DATABASE_URL}")
 
 # Create engine
 if settings.is_development:

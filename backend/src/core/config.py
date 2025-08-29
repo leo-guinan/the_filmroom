@@ -13,21 +13,22 @@ class Settings(BaseSettings):
 
     # Application
     app_name: str = Field(default="The Film Room")
-    app_env: str = Field(default="development")
+    app_env: str = Field(default="development", env="APP_ENV")
     debug: bool = Field(default=False)
     api_port: int = Field(default=8000)
     api_version: str = Field(default="v1")
     
     # Database
     database_url: str = Field(
-        default="postgresql://filmroom:filmroom@localhost:5432/filmroom_db"
+        default="postgresql://filmroom:filmroom@localhost:5432/filmroom_db",
+        env="DATABASE_URL"
     )
     database_pool_size: int = Field(default=20)
     database_max_overflow: int = Field(default=40)
     database_echo: bool = Field(default=False)
     
     # Security
-    secret_key: str = Field(default="change-this-secret-key-in-production")
+    secret_key: str = Field(default="change-this-secret-key-in-production", env="SECRET_KEY")
     jwt_algorithm: str = Field(default="HS256")
     jwt_expiration_hours: int = Field(default=24)
     password_min_length: int = Field(default=8)
