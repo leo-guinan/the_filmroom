@@ -1,128 +1,285 @@
 # The Film Room
 
-A secure coaching platform enabling encrypted video sessions with AI-powered transcription and client management.
+A secure coaching platform with AI-powered insights. Connect with clients through encrypted video sessions, get automatic transcriptions, and track progress—all in one platform.
 
-## Overview
+## 🚀 Production URLs
 
-The Film Room provides coaches with a comprehensive platform for conducting secure video sessions with clients. It combines:
-- **Encrypted video conferencing** via LiveKit for privacy and security
-- **Seamless scheduling** through Cal.com integration
-- **AI-powered session insights** with automatic transcription and analysis
-- **Client management tools** for tracking progress and session notes
+- **Frontend**: https://filmroom.leoasaservice.com
+- **Backend API**: https://coachapi.leoasaservice.com
+- **Status**: MVP in active development
 
-## Tech Stack
+## 📋 Current Project Status
 
-### Backend (Python)
-- **Package Manager**: uv
-- **Framework**: FastAPI
-- **Key Responsibilities**:
-  - LiveKit agent for session recording and transcription
-  - AI agent orchestration for session analysis
-  - Client data management and tracking
-  - API for frontend integration
+### ✅ Completed Features
 
-### Frontend (Next.js)
-- **Package Manager**: pnpm
+#### Authentication System
+- ✅ User registration with email/password
+- ✅ Login with JWT tokens  
+- ✅ Role-based access (Coach/Client)
+- ✅ Protected dashboard routes
+- ✅ Logout functionality
+- ✅ Password hashing with bcrypt
+
+#### Frontend Application
+- ✅ Modern landing page with product overview
+- ✅ User registration page with form validation
+- ✅ Login page with error handling
+- ✅ Protected dashboard with role-based UI
+- ✅ Responsive design with Tailwind CSS
+- ✅ Dark mode support
+- ✅ Custom domain setup (filmroom.leoasaservice.com)
+
+#### Backend API
+- ✅ RESTful API with FastAPI
+- ✅ PostgreSQL database with SQLAlchemy ORM
+- ✅ Database migrations with Alembic
+- ✅ JWT-based authentication
+- ✅ CORS configuration for production domains
+- ✅ Structured logging with structlog
+- ✅ Health check endpoints
+- ✅ Custom domain setup (coachapi.leoasaservice.com)
+
+#### Infrastructure & Deployment
+- ✅ Deployed on AWS via FlightControl
+- ✅ PostgreSQL RDS database configured
+- ✅ CloudFront CDN distribution
+- ✅ Custom domain configuration with SSL
+- ✅ Automated deployments from GitHub main branch
+- ✅ Environment-based configuration
+
+### 🚧 Currently Working On
+
+- 🔄 Finalizing RDS database connectivity
+- 🔄 Running initial database migrations
+- 🔄 Testing user registration flow end-to-end
+
+### 📝 Upcoming Features (Prioritized)
+
+1. **Core User Features**
+   - User profile management
+   - Password reset functionality
+   - Email verification
+
+2. **Video Sessions** (LiveKit Integration)
+   - Encrypted video conferencing
+   - Session recording capabilities
+   - Real-time collaboration features
+
+3. **AI-Powered Features**
+   - Automatic session transcription
+   - AI-generated session summaries
+   - Action item extraction
+   - Progress tracking analytics
+
+4. **Scheduling Integration**
+   - Cal.com integration for appointment booking
+   - Calendar synchronization
+   - Automated reminders
+
+5. **Advanced Features**
+   - Payment processing (Stripe)
+   - File sharing and document management
+   - Client progress dashboards
+   - Coach analytics and reporting
+
+## 🛠 Tech Stack
+
+### Frontend
+- **Framework**: Next.js 14 (App Router)
 - **Language**: TypeScript
-- **Key Features**:
-  - LiveKit video conference integration
-  - Cal.com scheduling widget
-  - Coach dashboard for client management
-  - Session history and insights viewer
+- **Styling**: Tailwind CSS
+- **Icons**: Lucide React
+- **State Management**: React Hooks
+- **API Client**: Native Fetch API
 
-### Core Services
-- **Video Infrastructure**: LiveKit.io (self-hosted or cloud)
-- **Scheduling**: Cal.com integration
-- **Database**: PostgreSQL
-- **AI Processing**: OpenAI/Anthropic APIs for transcription analysis
+### Backend
+- **Framework**: FastAPI (Python 3.11)
+- **Database**: PostgreSQL with SQLAlchemy ORM
+- **Authentication**: JWT tokens with python-jose
+- **Password Hashing**: Passlib with bcrypt
+- **Migrations**: Alembic
+- **Logging**: Structlog
+- **API Documentation**: OpenAPI/Swagger
 
-## Deployment
-- **Platform**: FlightControl
-- **Services**:
-  - Python backend API
-  - Next.js frontend application
-  - PostgreSQL database
+### Infrastructure
+- **Hosting**: AWS (managed by FlightControl)
+- **Database**: RDS PostgreSQL 16
+- **CDN**: CloudFront
+- **Container**: Docker with Nixpacks
+- **CI/CD**: GitHub → FlightControl automatic deployments
 
-## Project Structure
-```
-the_filmroom/
-├── backend/           # Python FastAPI + LiveKit Agent
-│   ├── pyproject.toml
-│   ├── src/
-│   │   ├── agents/    # LiveKit agents for transcription
-│   │   ├── api/       # FastAPI routes
-│   │   ├── models/    # Database models
-│   │   └── services/  # AI and business logic
-│   └── tests/
-├── frontend/          # Next.js coaching platform
-│   ├── package.json
-│   ├── src/
-│   │   ├── components/
-│   │   │   ├── video/     # LiveKit components
-│   │   │   ├── scheduling/ # Cal.com integration
-│   │   │   └── dashboard/  # Coach dashboard
-│   │   ├── pages/
-│   │   └── lib/
-│   └── public/
-├── flightcontrol.json # FlightControl configuration
-├── docker-compose.yml # Local development
-└── README.md
-```
-
-## Key Features
-
-### For Coaches
-- **Secure Video Sessions**: End-to-end encrypted video calls with clients
-- **Automated Transcription**: Every session is automatically transcribed for review
-- **AI-Powered Insights**: Get summaries, action items, and progress tracking from session content
-- **Client Management**: Track client progress, session history, and notes in one place
-- **Integrated Scheduling**: Seamless Cal.com integration for booking and calendar management
-
-### For Clients
-- **Easy Booking**: Simple scheduling through Cal.com
-- **Secure Access**: Private, encrypted sessions with their coach
-- **Session History**: Access to past session recordings and notes
-
-## Getting Started
+## 🏃‍♂️ Local Development
 
 ### Prerequisites
+- Node.js 20+
 - Python 3.11+
-- Node.js 18+
-- uv (Python package manager)
-- pnpm (Node package manager)
-- LiveKit server (local or cloud)
-- PostgreSQL database
-- Cal.com account (for scheduling integration)
+- PostgreSQL 14+
+- pnpm (for frontend)
+- pip/venv (for backend)
 
-### Development Setup
+### Backend Setup
 
-#### Backend
 ```bash
 cd backend
-uv venv
+
+# Create and activate virtual environment
+python -m venv .venv
 source .venv/bin/activate  # On Windows: .venv\Scripts\activate
-uv pip install -e .
-uv run fastapi dev src/main.py
+
+# Install dependencies
+pip install -e .
+
+# Create .env file
+cat > .env << EOF
+DATABASE_URL=postgresql://filmroom:filmroom@localhost:5432/filmroom_db
+APP_ENV=development
+SECRET_KEY=your-secret-key-here
+CORS_ORIGINS=http://localhost:3000
+EOF
+
+# Run database migrations
+alembic upgrade head
+
+# Start development server
+uvicorn src.main:app --reload --port 8000
 ```
 
-#### Frontend
+API documentation available at:
+- Swagger UI: http://localhost:8000/docs
+- ReDoc: http://localhost:8000/redoc
+
+### Frontend Setup
+
 ```bash
 cd frontend
+
+# Install dependencies
 pnpm install
+
+# Create .env.local file
+cat > .env.local << EOF
+NEXT_PUBLIC_API_URL=http://localhost:8000
+EOF
+
+# Start development server
 pnpm dev
 ```
 
-#### LiveKit Server (Local Development)
-```bash
-# Using Docker
-docker run -d \
-  -p 7880:7880 \
-  -p 7881:7881 \
-  -p 7882:7882/udp \
-  -e LIVEKIT_KEYS="devkey: secret" \
-  livekit/livekit-server
+Frontend available at: http://localhost:3000
+
+## 📁 Project Structure
+
+```
+the_filmroom/
+├── frontend/                 # Next.js frontend application
+│   ├── src/
+│   │   ├── app/             # App Router pages
+│   │   │   ├── page.tsx     # Landing page
+│   │   │   ├── login/       # Login page
+│   │   │   ├── signup/      # Registration page
+│   │   │   └── dashboard/   # Protected dashboard
+│   │   └── lib/             # Utilities and helpers
+│   ├── public/              # Static assets
+│   ├── package.json
+│   └── .env.production      # Production environment
+│
+├── backend/                 # FastAPI backend application
+│   ├── src/
+│   │   ├── api/            # API route handlers
+│   │   │   ├── auth.py     # Authentication endpoints
+│   │   │   ├── users.py    # User management
+│   │   │   └── health.py   # Health checks
+│   │   ├── core/           # Core configuration
+│   │   │   ├── config.py   # Settings management
+│   │   │   └── logging.py  # Logging setup
+│   │   ├── models/         # Database models
+│   │   │   ├── user.py     # User model
+│   │   │   └── session.py  # Session model
+│   │   ├── services/       # Business logic
+│   │   │   └── auth.py     # Authentication service
+│   │   └── main.py         # Application entry point
+│   ├── alembic/            # Database migrations
+│   ├── tests/              # Test suite
+│   ├── pyproject.toml      # Python dependencies
+│   └── startup.sh          # Production startup script
+│
+├── flightcontrol.json      # Deployment configuration
+├── nixpacks.toml           # Build configuration
+└── README.md               # This file
 ```
 
-## Deployment
+## 🚀 Deployment
 
-Deployments are handled via FlightControl. Push to main branch to trigger automatic deployment.
+### FlightControl Configuration
+
+The application deploys automatically when pushing to the `main` branch:
+
+1. **PostgreSQL Database** (RDS)
+   - PostgreSQL 16
+   - db.t4g.micro instance
+   - 20GB storage
+   - Database name: `filmroom_db`
+
+2. **Backend API Service** (Fargate)
+   - 0.5 vCPU, 2GB RAM
+   - Auto-scaling: 1-3 instances
+   - Health check: `/health`
+   - Custom domain: coachapi.leoasaservice.com
+
+3. **Frontend Web Service** (Fargate)
+   - 0.5 vCPU, 2GB RAM
+   - Auto-scaling: 1-3 instances
+   - Custom domain: filmroom.leoasaservice.com
+
+### Environment Variables
+
+#### Backend (Production)
+- `DATABASE_URL` - Automatically set by FlightControl from RDS
+- `APP_ENV` - Set to "production"
+- `SECRET_KEY` - Generate secure random string
+- `CORS_ORIGINS` - Set to frontend domain
+
+#### Frontend (Production)
+- `NEXT_PUBLIC_API_URL` - Set to https://coachapi.leoasaservice.com
+
+## 🔒 Security Features
+
+- **Authentication**: JWT tokens with secure httpOnly cookies (planned)
+- **Password Security**: Bcrypt hashing with salt
+- **CORS Protection**: Strict origin validation
+- **SQL Injection Prevention**: SQLAlchemy ORM with parameterized queries
+- **Environment Variables**: Sensitive data stored in environment
+- **HTTPS Only**: All production traffic over SSL
+- **Rate Limiting**: Coming soon
+
+## 🧪 Testing
+
+```bash
+# Backend tests
+cd backend
+pytest
+
+# Frontend tests (coming soon)
+cd frontend
+pnpm test
+```
+
+## 📊 Monitoring & Logs
+
+- Application logs available in FlightControl dashboard
+- Structured JSON logging for easy parsing
+- Request IDs for tracing
+- Performance metrics in CloudWatch
+
+## 🤝 Contributing
+
+This is a private project. For questions or issues, please contact the project maintainer.
+
+## 📄 License
+
+Proprietary - All Rights Reserved
+
+---
+
+**Last Updated**: August 29, 2024
+**Current Focus**: Establishing RDS database connectivity and completing user registration flow
