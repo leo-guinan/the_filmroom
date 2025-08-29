@@ -8,7 +8,8 @@ class Settings(BaseSettings):
     model_config = SettingsConfigDict(
         env_file=".env",
         env_file_encoding="utf-8",
-        case_sensitive=False
+        case_sensitive=False,
+        extra="ignore"  # Ignore extra fields in .env file
     )
 
     # Application
@@ -53,6 +54,11 @@ class Settings(BaseSettings):
     # AI Services
     openai_api_key: Optional[str] = Field(default=None)
     anthropic_api_key: Optional[str] = Field(default=None)
+    
+    # LiveKit Configuration
+    livekit_api_key: str = Field(default="", env="LIVEKIT_API_KEY")
+    livekit_api_secret: str = Field(default="", env="LIVEKIT_API_SECRET")
+    livekit_url: str = Field(default="ws://localhost:7880", env="LIVEKIT_URL")
     
     # Email
     email_enabled: bool = Field(default=False)
