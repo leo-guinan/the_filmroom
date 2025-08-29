@@ -40,8 +40,8 @@
           "memory": 2,
           "port": 8000,
           "healthCheckPath": "/health",
-          "buildCommand": "cd backend && /opt/venv/bin/pip install -e . && chmod +x startup.sh",
-          "startCommand": "/app/backend/startup.sh",
+          "buildCommand": "cd backend && /opt/venv/bin/pip install -e .",
+          "startCommand": "bash /app/backend/startup.sh",
           "minInstances": 1,
           "maxInstances": 3,
           "customDomains": [
