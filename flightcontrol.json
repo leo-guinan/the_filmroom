@@ -53,7 +53,7 @@
             "DATABASE_URL": {
               "fromService": {
                 "id": "postgres",
-                "value": "connectionString"
+                "value": "dbConnectionString"
               }
             },
             "APP_ENV": "production",
