@@ -6,6 +6,7 @@ from fastapi import HTTPException, status
 from src.core import get_logger
 from src.models import User
 from src.models.user import UserRole
+from src.models.client import ClientProfile
 
 logger = get_logger(__name__)
 
