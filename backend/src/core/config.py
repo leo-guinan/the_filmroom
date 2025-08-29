@@ -56,8 +56,8 @@ class Settings(BaseSettings):
     anthropic_api_key: Optional[str] = Field(default=None)
     
     # LiveKit Configuration
-    livekit_api_key: str = Field(default="", env="LIVEKIT_API_KEY")
-    livekit_api_secret: str = Field(default="", env="LIVEKIT_API_SECRET")
+    livekit_api_key: str = Field(default="devkey", env="LIVEKIT_API_KEY")
+    livekit_api_secret: str = Field(default="secret", env="LIVEKIT_API_SECRET")
     livekit_url: str = Field(default="ws://localhost:7880", env="LIVEKIT_URL")
     
     # Email
@@ -115,3 +115,9 @@ if os.getenv("DATABASE_URL"):
     print(f"DATABASE_URL environment variable found: {os.getenv('DATABASE_URL').split('@')[1] if '@' in os.getenv('DATABASE_URL') else 'invalid format'}")
 else:
     print(f"DATABASE_URL not found in environment, using default: {settings.database_url.split('@')[1] if '@' in settings.database_url else settings.database_url}")
+
+# Debug LiveKit settings
+print(f"LiveKit settings loaded:")
+print(f"  - API Key: {'***' + settings.livekit_api_key[-4:] if len(settings.livekit_api_key) > 4 else settings.livekit_api_key or 'NOT SET'}")
+print(f"  - API Secret: {'***' + settings.livekit_api_secret[-4:] if len(settings.livekit_api_secret) > 4 else settings.livekit_api_secret or 'NOT SET'}")
+print(f"  - URL: {settings.livekit_url}")

@@ -122,6 +122,8 @@ async def create_test_room(
     from src.core import settings
     livekit_url = settings.livekit_url.replace("ws://", "").replace("wss://", "")
     
+    logger.info(f"LiveKit URL from settings: {settings.livekit_url}, stripped URL: {livekit_url}")
+    logger.info(f"LiveKit API Key configured: {'yes' if settings.livekit_api_key else 'no'}")
     logger.info(f"Created test room {room_name} for user {current_user.email}")
     
     return RoomTokenResponse(
