@@ -1,6 +1,6 @@
-from typing import List, Optional
+from typing import List, Optional, Any
 from pydantic_settings import BaseSettings, SettingsConfigDict
-from pydantic import Field, validator
+from pydantic import Field, validator, field_validator
 import os
 
 
@@ -8,7 +8,7 @@ class Settings(BaseSettings):
     model_config = SettingsConfigDict(
         env_file=".env",
         env_file_encoding="utf-8",
-        case_sensitive=False,
+        case_sensitive=False
     )
 
     # Application
@@ -33,13 +33,14 @@ class Settings(BaseSettings):
     jwt_expiration_hours: int = Field(default=24)
     password_min_length: int = Field(default=8)
     
-    # CORS
-    cors_origins: List[str] = Field(
-        default=["http://localhost:3000", "http://localhost:3001"]
+    # CORS - handle as string to avoid JSON parsing issues
+    cors_origins_str: str = Field(
+        default="http://localhost:3000,http://localhost:3001",
+        env="CORS_ORIGINS"
     )
     cors_allow_credentials: bool = Field(default=True)
-    cors_allow_methods: List[str] = Field(default=["GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH"])
-    cors_allow_headers: List[str] = Field(default=["*"])
+    cors_allow_methods_str: str = Field(default="GET,POST,PUT,DELETE,OPTIONS,PATCH", env="CORS_ALLOW_METHODS")
+    cors_allow_headers_str: str = Field(default="*", env="CORS_ALLOW_HEADERS")
     
     # LiveKit
     livekit_api_key: str = Field(default="devkey")
@@ -67,12 +68,25 @@ class Settings(BaseSettings):
     aws_secret_access_key: Optional[str] = Field(default=None)
     aws_s3_bucket: str = Field(default="filmroom-recordings")
     aws_region: str = Field(default="us-east-1")
-
-    @validator("cors_origins", pre=True)
-    def parse_cors_origins(cls, v):
-        if isinstance(v, str):
-            return [origin.strip() for origin in v.split(",")]
-        return v
+    
+    @property
+    def cors_origins(self) -> List[str]:
+        """Parse CORS origins from comma-separated string."""
+        return [origin.strip() for origin in self.cors_origins_str.split(",") if origin.strip()]
+    
+    @property
+    def cors_allow_methods(self) -> List[str]:
+        """Parse CORS methods from comma-separated string."""
+        if self.cors_allow_methods_str == "*":
+            return ["*"]
+        return [method.strip() for method in self.cors_allow_methods_str.split(",") if method.strip()]
+    
+    @property
+    def cors_allow_headers(self) -> List[str]:
+        """Parse CORS headers from comma-separated string."""
+        if self.cors_allow_headers_str == "*":
+            return ["*"]
+        return [header.strip() for header in self.cors_allow_headers_str.split(",") if header.strip()]
 
     @property
     def is_production(self) -> bool:
