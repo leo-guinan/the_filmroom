@@ -7,8 +7,8 @@ import time
 from typing import AsyncGenerator
 import os
 
-from core import settings, setup_logging, get_logger
-from api import health_router, auth_router, users_router, sessions_router
+from src.core import settings, setup_logging, get_logger
+from src.api import health_router, auth_router, users_router, sessions_router
 
 # Set up logging
 setup_logging()
@@ -143,7 +143,7 @@ async def add_request_id(request: Request, call_next):
     request.state.request_id = request_id
     
     # Bind to logging context
-    from core.logging import bind_request_id, clear_contextvars
+    from src.core.logging import bind_request_id, clear_contextvars
     bind_request_id(request_id)
     
     start_time = time.time()

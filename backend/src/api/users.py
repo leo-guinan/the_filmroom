@@ -4,10 +4,10 @@ from typing import List, Optional
 from datetime import datetime
 from sqlalchemy.orm import Session
 
-from core import get_logger
-from models import get_db, User, ClientProfile
-from services.auth import get_current_active_user, require_coach, require_admin
-from services.user import UserService
+from src.core import get_logger
+from src.models import get_db, User
+from src.services.auth import get_current_active_user
+from src.services.user import UserService
 
 router = APIRouter()
 logger = get_logger(__name__)

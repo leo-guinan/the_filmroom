@@ -5,7 +5,7 @@ from sqlalchemy.orm import sessionmaker, Session
 from sqlalchemy.pool import NullPool
 from contextlib import contextmanager
 
-from core import settings, get_logger
+from src.core import settings, get_logger
 import os
 
 logger = get_logger(__name__)
@@ -13,6 +13,11 @@ logger = get_logger(__name__)
 # Database URL configuration
 # Try to get from environment first, then fall back to settings
 DATABASE_URL = os.getenv("DATABASE_URL") or settings.database_url
+
+# Fix postgres:// to postgresql:// for SQLAlchemy compatibility
+if DATABASE_URL.startswith("postgres://"):
+    DATABASE_URL = DATABASE_URL.replace("postgres://", "postgresql://", 1)
+
 logger.info(f"Database URL configured: {DATABASE_URL.split('@')[1] if '@' in DATABASE_URL else DATABASE_URL}")
 
 # Create engine

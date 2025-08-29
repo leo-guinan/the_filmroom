@@ -6,10 +6,10 @@ from typing import Optional
 from datetime import datetime, timedelta
 from sqlalchemy.orm import Session
 
-from core import get_logger, settings
-from models import get_db, User
-from models.user import UserRole
-from services.auth import AuthService, get_current_user, get_current_active_user
+from src.core import get_logger, settings
+from src.models import get_db, User
+from src.models.user import UserRole
+from src.services.auth import AuthService, get_current_user, get_current_active_user
 
 router = APIRouter()
 logger = get_logger(__name__)

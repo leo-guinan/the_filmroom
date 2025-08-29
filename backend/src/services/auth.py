@@ -6,9 +6,9 @@ from jose import JWTError, jwt
 from passlib.context import CryptContext
 from sqlalchemy.orm import Session
 
-from core import settings, get_logger
-from models import User, get_db
-from models.user import UserRole
+from src.core import settings, get_logger
+from src.models import User, get_db
+from src.models.user import UserRole
 
 logger = get_logger(__name__)
 

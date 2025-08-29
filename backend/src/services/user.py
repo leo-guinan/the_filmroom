@@ -3,9 +3,9 @@ from sqlalchemy.orm import Session
 from sqlalchemy import or_
 from fastapi import HTTPException, status
 
-from core import get_logger
-from models import User, ClientProfile
-from models.user import UserRole
+from src.core import get_logger
+from src.models import User
+from src.models.user import UserRole
 
 logger = get_logger(__name__)
 
