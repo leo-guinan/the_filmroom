@@ -49,7 +49,22 @@ function RoomContent() {
   const fetchRoomToken = async (roomId: string | null, testMode: boolean) => {
     try {
       const accessToken = localStorage.getItem('access_token')
+      
+      if (!accessToken) {
+        console.error('No access token found')
+        setError('Authentication required. Please log in.')
+        router.push('/login')
+        return
+      }
+      
       const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000'
+      
+      console.log('Fetching room token:', {
+        apiUrl,
+        testMode,
+        roomId,
+        hasToken: !!accessToken
+      })
       
       const endpoint = testMode 
         ? '/api/v1/video/test-room' 
@@ -68,8 +83,19 @@ function RoomContent() {
         body: JSON.stringify(body)
       })
 
+      if (response.status === 401) {
+        console.error('Authentication failed - token may be expired')
+        localStorage.removeItem('access_token')
+        localStorage.removeItem('user')
+        setError('Session expired. Please log in again.')
+        router.push('/login')
+        return
+      }
+
       if (!response.ok) {
-        throw new Error('Failed to get room token')
+        const errorData = await response.json().catch(() => ({}))
+        console.error('Failed to get room token:', response.status, errorData)
+        throw new Error(errorData.detail || `Failed to get room token (${response.status})`)
       }
 
       const data = await response.json()
