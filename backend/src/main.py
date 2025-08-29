@@ -9,6 +9,7 @@ import os
 
 from src.core import settings, setup_logging, get_logger
 from src.api import health_router, auth_router, users_router, sessions_router
+from src.api.video import router as video_router
 
 # Set up logging
 setup_logging()
@@ -204,6 +205,7 @@ app.include_router(health_router, tags=["health"])
 app.include_router(auth_router, prefix=f"/api/{settings.api_version}/auth", tags=["auth"])
 app.include_router(users_router, prefix=f"/api/{settings.api_version}/users", tags=["users"])
 app.include_router(sessions_router, prefix=f"/api/{settings.api_version}/sessions", tags=["sessions"])
+app.include_router(video_router, prefix=f"/api/{settings.api_version}/video", tags=["video"])
 
 
 @app.get("/")

@@ -43,9 +43,9 @@ class Settings(BaseSettings):
     cors_allow_headers_str: str = Field(default="*", env="CORS_ALLOW_HEADERS")
     
     # LiveKit
-    livekit_api_key: str = Field(default="devkey")
-    livekit_api_secret: str = Field(default="secret")
-    livekit_url: str = Field(default="ws://localhost:7880")
+    livekit_api_key: str = Field(default="devkey", env="LIVEKIT_API_KEY")
+    livekit_api_secret: str = Field(default="secret", env="LIVEKIT_API_SECRET")
+    livekit_url: str = Field(default="ws://localhost:7880", env="LIVEKIT_URL")
     
     # Redis
     redis_url: str = Field(default="redis://localhost:6379/0")

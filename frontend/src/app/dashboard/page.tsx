@@ -3,7 +3,7 @@
 import { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
-import { Video, Calendar, Users, FileText, Settings, LogOut, Plus } from 'lucide-react'
+import { Video, Calendar, Users, FileText, Settings, LogOut, Plus, VideoIcon } from 'lucide-react'
 
 interface User {
   id: string
@@ -116,12 +116,21 @@ export default function DashboardPage() {
                 {user.role === 'COACH' ? 'Manage your coaching sessions' : 'View your upcoming sessions'}
               </p>
             </div>
-            {user.role === 'COACH' && (
-              <button className="flex items-center space-x-2 bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700">
-                <Plus className="h-5 w-5" />
-                <span>New Session</span>
-              </button>
-            )}
+            <div className="flex gap-3">
+              {user.role === 'COACH' && (
+                <button className="flex items-center space-x-2 bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700">
+                  <Plus className="h-5 w-5" />
+                  <span>New Session</span>
+                </button>
+              )}
+              <Link 
+                href="/room?test=true"
+                className="flex items-center space-x-2 bg-green-600 text-white px-4 py-2 rounded-md hover:bg-green-700"
+              >
+                <VideoIcon className="h-5 w-5" />
+                <span>Test Video</span>
+              </Link>
+            </div>
           </div>
         </header>
 
