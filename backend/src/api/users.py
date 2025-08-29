@@ -6,7 +6,7 @@ from sqlalchemy.orm import Session
 
 from src.core import get_logger
 from src.models import get_db, User
-from src.services.auth import get_current_active_user
+from src.services.auth import get_current_active_user, require_coach, require_admin
 from src.services.user import UserService
 
 router = APIRouter()
