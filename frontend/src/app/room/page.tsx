@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, Suspense } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
 import dynamic from 'next/dynamic'
 import { Video, Loader2 } from 'lucide-react'
@@ -15,7 +15,7 @@ const VideoRoom = dynamic(() => import('@/components/VideoRoom'), {
   )
 })
 
-export default function RoomPage() {
+function RoomContent() {
   const router = useRouter()
   const searchParams = useSearchParams()
   const [token, setToken] = useState<string>('')
@@ -127,4 +127,19 @@ export default function RoomPage() {
   }
 
   return <VideoRoom token={token} serverUrl={serverUrl} roomName={roomName} />
+}
+
+export default function RoomPage() {
+  return (
+    <Suspense fallback={
+      <div className="min-h-screen bg-neutral-950 flex items-center justify-center">
+        <div className="text-center">
+          <Loader2 className="h-12 w-12 animate-spin text-blue-600 mx-auto mb-4" />
+          <p className="text-white">Loading room...</p>
+        </div>
+      </div>
+    }>
+      <RoomContent />
+    </Suspense>
+  )
 }
