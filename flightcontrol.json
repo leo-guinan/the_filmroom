@@ -34,7 +34,7 @@
             "type": "fargate"
           },
           "ci": {
-            "type": "ec2"
+            "type": "codebuild"
           },
           "cpu": 0.5,
           "memory": 2,
@@ -76,7 +76,7 @@
             "type": "fargate"
           },
           "ci": {
-            "type": "ec2"
+            "type": "codebuild"
           },
           "cpu": 0.5,
           "memory": 2,
