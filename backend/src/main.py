@@ -55,13 +55,14 @@ else:
     # Otherwise use settings
     allowed_origins = settings.cors_origins
 
-# In production, ensure we have the CloudFront domains
+# In production, ensure we have the custom domains
 if settings.app_env == "production":
     # Add all possible frontend origins
     production_origins = [
+        "https://filmroom.leoasaservice.com",
+        "https://coachapi.leoasaservice.com",
         "https://d2i2sf9vq7cc6e.cloudfront.net",
         "https://d1wbmmojehnr8o.cloudfront.net", 
-        "https://thefilmroom.com",
         "http://localhost:3000"
     ]
     # Merge with configured origins
