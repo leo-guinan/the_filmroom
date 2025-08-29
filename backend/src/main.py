@@ -73,16 +73,42 @@ if settings.app_env == "production":
 logger.info(f"CORS Origins configured: {allowed_origins}")
 
 # CORS middleware - must be added before other middleware
-# Note: When allow_credentials is True, we cannot use "*" for origins
 app.add_middleware(
     CORSMiddleware,
     allow_origins=allowed_origins,
-    allow_credentials=False,  # Set to False to allow wildcard methods
-    allow_methods=["*"],
-    allow_headers=["*"],
+    allow_credentials=True,
+    allow_methods=["GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH"],
+    allow_headers=["Content-Type", "Authorization", "Accept", "Origin", "X-Requested-With"],
     expose_headers=["*"],
 )
 
+
+# Add CORS headers middleware
+@app.middleware("http")
+async def add_cors_headers(request: Request, call_next):
+    """Ensure CORS headers are added to all responses."""
+    origin = request.headers.get("origin")
+    
+    # Process the request
+    response = await call_next(request)
+    
+    # Add CORS headers if origin is present
+    if origin:
+        allowed_origins = [
+            "https://filmroom.leoasaservice.com",
+            "https://coachapi.leoasaservice.com",
+            "https://d2i2sf9vq7cc6e.cloudfront.net",
+            "https://d1wbmmojehnr8o.cloudfront.net",
+            "http://localhost:3000"
+        ]
+        
+        if origin in allowed_origins:
+            response.headers["Access-Control-Allow-Origin"] = origin
+            response.headers["Access-Control-Allow-Credentials"] = "true"
+            response.headers["Access-Control-Allow-Methods"] = "GET, POST, PUT, DELETE, OPTIONS, PATCH"
+            response.headers["Access-Control-Allow-Headers"] = "Content-Type, Authorization, Accept, Origin, X-Requested-With"
+    
+    return response
 
 # Request ID middleware
 @app.middleware("http")
@@ -150,14 +176,32 @@ async def internal_error_handler(request: Request, exc):
 
 # Add a catch-all OPTIONS handler BEFORE including routers
 @app.options("/{path:path}")
-async def options_handler(path: str):
+async def options_handler(request: Request, path: str):
     """Handle all OPTIONS requests."""
+    origin = request.headers.get("origin", "*")
+    
+    # List of allowed origins
+    allowed_origins = [
+        "https://filmroom.leoasaservice.com",
+        "https://coachapi.leoasaservice.com",
+        "https://d2i2sf9vq7cc6e.cloudfront.net",
+        "https://d1wbmmojehnr8o.cloudfront.net",
+        "http://localhost:3000"
+    ]
+    
+    # Check if origin is allowed
+    if origin in allowed_origins:
+        response_origin = origin
+    else:
+        response_origin = "https://filmroom.leoasaservice.com"  # Default to main frontend
+    
     return JSONResponse(
         status_code=200,
         headers={
-            "Access-Control-Allow-Origin": "*",
+            "Access-Control-Allow-Origin": response_origin,
             "Access-Control-Allow-Methods": "GET, POST, PUT, DELETE, OPTIONS, PATCH",
-            "Access-Control-Allow-Headers": "*",
+            "Access-Control-Allow-Headers": "Content-Type, Authorization, Accept, Origin, X-Requested-With",
+            "Access-Control-Allow-Credentials": "true",
             "Access-Control-Max-Age": "3600",
         }
     )
