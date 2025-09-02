@@ -3,7 +3,7 @@
 import { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
-import { Video, Calendar, Users, FileText, Settings, LogOut, Plus, VideoIcon } from 'lucide-react'
+import { Video, Calendar, Users, FileText, Settings, LogOut, Plus, VideoIcon, Home } from 'lucide-react'
 
 interface User {
   id: string
@@ -66,7 +66,11 @@ export default function DashboardPage() {
         </div>
         
         <nav className="p-4 space-y-2">
-          <Link href="/dashboard" className="flex items-center space-x-3 px-3 py-2 rounded-md bg-blue-50 dark:bg-blue-900/20 text-blue-600">
+          <Link href="/dashboard" className="flex items-center space-x-3 px-3 py-2 rounded-md hover:bg-neutral-100 dark:hover:bg-neutral-800">
+            <Home className="h-5 w-5" />
+            <span>Dashboard</span>
+          </Link>
+          <Link href="/dashboard/sessions" className="flex items-center space-x-3 px-3 py-2 rounded-md hover:bg-neutral-100 dark:hover:bg-neutral-800">
             <Calendar className="h-5 w-5" />
             <span>Sessions</span>
           </Link>
@@ -118,10 +122,13 @@ export default function DashboardPage() {
             </div>
             <div className="flex gap-3">
               {user.role === 'COACH' && (
-                <button className="flex items-center space-x-2 bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700">
+                <Link 
+                  href="/dashboard/sessions/new"
+                  className="flex items-center space-x-2 bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700"
+                >
                   <Plus className="h-5 w-5" />
                   <span>New Session</span>
-                </button>
+                </Link>
               )}
               <Link 
                 href="/room?test=true"
