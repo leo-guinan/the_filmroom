@@ -50,14 +50,21 @@ class LiveKitService:
         }
         
         # Build the claims
+        # LiveKit Cloud expects metadata as a JSON string
+        import json
+        metadata_str = json.dumps(metadata) if metadata else ""
+        
         claims = {
             "exp": exp,
             "iss": settings.livekit_api_key,
             "sub": participant_identity,
             "name": participant_name,
             "video": video_grant,
-            "metadata": metadata or {}
         }
+        
+        # Only add metadata if it exists
+        if metadata_str:
+            claims["metadata"] = metadata_str
         
         # Generate the token
         token = jwt.encode(
