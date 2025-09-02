@@ -4,6 +4,7 @@ import { useState, useEffect, Suspense } from 'react'
 import { useRouter, useParams } from 'next/navigation'
 import dynamic from 'next/dynamic'
 import { Video, Loader2, AlertCircle, ArrowLeft } from 'lucide-react'
+import { getApiUrl } from '@/lib/api'
 
 // Dynamically import LiveKit components to avoid SSR issues
 const VideoRoom = dynamic(() => import('@/components/VideoRoom'), {
@@ -48,7 +49,7 @@ export default function SessionRoomPage() {
   const joinSession = async () => {
     try {
       const accessToken = localStorage.getItem('access_token')
-      const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000'
+      const apiUrl = getApiUrl()
       
       console.log('Joining session:', sessionId)
       

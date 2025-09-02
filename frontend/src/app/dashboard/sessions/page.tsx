@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import { Calendar, Clock, Video, Plus, Users, ChevronRight, AlertCircle } from 'lucide-react'
+import { getApiUrl } from '@/lib/api'
 
 interface Session {
   id: string
@@ -53,7 +54,7 @@ export default function SessionsPage() {
     try {
       setLoading(true)
       const accessToken = localStorage.getItem('access_token')
-      const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000'
+      const apiUrl = getApiUrl()
       
       let endpoint = '/api/v1/sessions?'
       if (filter === 'upcoming') {

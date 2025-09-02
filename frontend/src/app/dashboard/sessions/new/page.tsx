@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import { Calendar, Clock, User, ArrowLeft } from 'lucide-react'
+import { getApiUrl } from '@/lib/api'
 
 interface Client {
   id: string
@@ -41,7 +42,7 @@ export default function NewSessionPage() {
   const fetchClients = async () => {
     try {
       const accessToken = localStorage.getItem('access_token')
-      const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000'
+      const apiUrl = getApiUrl()
       
       const response = await fetch(`${apiUrl}/api/v1/users?role=client`, {
         headers: {
@@ -74,7 +75,7 @@ export default function NewSessionPage() {
     try {
       setLoading(true)
       const accessToken = localStorage.getItem('access_token')
-      const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000'
+      const apiUrl = getApiUrl()
       
       // Combine date and time into ISO string
       const scheduledAt = new Date(`${formData.scheduled_date}T${formData.scheduled_time}`)
