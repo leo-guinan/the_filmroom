@@ -56,7 +56,7 @@ export default function SessionsPage() {
       const accessToken = localStorage.getItem('access_token')
       const apiUrl = getApiUrl()
       
-      let endpoint = '/api/v1/sessions?'
+      let endpoint = '/api/v1/sessions/?'
       if (filter === 'upcoming') {
         endpoint += 'upcoming_only=true'
       } else if (filter === 'completed') {

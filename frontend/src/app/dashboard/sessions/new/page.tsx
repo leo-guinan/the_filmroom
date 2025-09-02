@@ -44,7 +44,7 @@ export default function NewSessionPage() {
       const accessToken = localStorage.getItem('access_token')
       const apiUrl = getApiUrl()
       
-      const response = await fetch(`${apiUrl}/api/v1/users?role=client`, {
+      const response = await fetch(`${apiUrl}/api/v1/users/?role=client`, {
         headers: {
           'Authorization': `Bearer ${accessToken}`,
         },
@@ -80,7 +80,7 @@ export default function NewSessionPage() {
       // Combine date and time into ISO string
       const scheduledAt = new Date(`${formData.scheduled_date}T${formData.scheduled_time}`)
       
-      const response = await fetch(`${apiUrl}/api/v1/sessions`, {
+      const response = await fetch(`${apiUrl}/api/v1/sessions/`, {
         method: 'POST',
         headers: {
           'Authorization': `Bearer ${accessToken}`,
