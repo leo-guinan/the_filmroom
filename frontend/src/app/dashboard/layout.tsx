@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react'
 import { useRouter, usePathname } from 'next/navigation'
 import Link from 'next/link'
 import { Video, Calendar, Users, FileText, Settings, LogOut, Home, Menu, X } from 'lucide-react'
+import { getApiUrl } from '@/lib/api'
 
 interface User {
   id: string
@@ -36,6 +37,27 @@ export default function DashboardLayout({
     try {
       const parsedUser = JSON.parse(userData)
       setUser(parsedUser)
+      
+      // Also fetch fresh user data from API to ensure it's up to date
+      const apiUrl = getApiUrl()
+      fetch(`${apiUrl}/api/v1/auth/me`, {
+        headers: {
+          'Authorization': `Bearer ${token}`
+        }
+      })
+      .then(res => res.json())
+      .then(freshUser => {
+        // Update localStorage with fresh data
+        const updatedUser = {
+          ...freshUser,
+          role: freshUser.role // Ensure we have the latest role
+        }
+        localStorage.setItem('user', JSON.stringify(updatedUser))
+        setUser(updatedUser)
+      })
+      .catch(err => {
+        console.error('Failed to fetch user data:', err)
+      })
     } catch (error) {
       console.error('Error parsing user data:', error)
       router.push('/login')

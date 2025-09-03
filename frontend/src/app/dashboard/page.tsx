@@ -45,6 +45,16 @@ export default function DashboardPage() {
         <p className="text-neutral-600 dark:text-neutral-400">
           {isCoach ? 'Manage your coaching sessions and clients' : 'View your upcoming sessions and progress'}
         </p>
+        
+        {/* Debug info - remove this after fixing */}
+        <div className="mt-4 p-4 bg-yellow-100 dark:bg-yellow-900/20 border border-yellow-300 dark:border-yellow-700 rounded-md">
+          <p className="text-sm font-mono">
+            Debug: Your role is "{user.role}" (isCoach = {isCoach ? 'true' : 'false'})
+          </p>
+          <p className="text-xs text-gray-600 dark:text-gray-400 mt-1">
+            If this shows CLIENT but you registered as a coach, try logging out and back in.
+          </p>
+        </div>
       </div>
 
       {/* Quick Actions */}

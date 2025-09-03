@@ -281,11 +281,18 @@ async def get_current_user_info(
     current_user: User = Depends(get_current_active_user)
 ):
     """Get current user information."""
+    # Extract first and last name from full_name
+    name_parts = current_user.full_name.split(' ', 1) if current_user.full_name else ["", ""]
+    first_name = name_parts[0]
+    last_name = name_parts[1] if len(name_parts) > 1 else ""
+    
     return UserResponse(
         id=current_user.id,
         email=current_user.email,
         full_name=current_user.full_name,
-        role=current_user.role.value,
+        first_name=first_name,
+        last_name=last_name,
+        role=current_user.role.value if hasattr(current_user.role, 'value') else current_user.role,
         is_active=current_user.is_active,
         is_verified=current_user.is_verified,
         created_at=current_user.created_at
