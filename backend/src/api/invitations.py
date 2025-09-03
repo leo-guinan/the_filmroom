@@ -9,7 +9,7 @@ from src.core import get_logger, settings
 from src.models import get_db, User, Invitation, InvitationStatus, CoachClientRelationship
 from src.models.user import UserRole
 from src.services.auth import get_current_active_user
-# from src.services.email import EmailService  # TODO: Implement email service
+from src.services.email import EmailService
 
 router = APIRouter()
 logger = get_logger(__name__)
@@ -343,13 +343,10 @@ async def remove_client(
     return {"message": "Client removed successfully"}
 
 
-# Email sending function (to be implemented with actual email service)
+# Email sending function
 async def send_invitation_email(invitation: Invitation, coach_name: str, app_url: str):
     """Send invitation email to client."""
     try:
-        # For now, just log the invitation
-        # In production, this would use an email service like SendGrid, AWS SES, etc.
-        
         invitation_link = f"{app_url}/signup?invitation={invitation.token}"
         
         logger.info(
@@ -358,13 +355,18 @@ async def send_invitation_email(invitation: Invitation, coach_name: str, app_url
             coach_name=coach_name
         )
         
-        # TODO: Implement actual email sending
-        # EmailService.send_invitation(
-        #     to_email=invitation.email,
-        #     coach_name=coach_name,
-        #     invitation_link=invitation_link,
-        #     personal_message=invitation.message
-        # )
+        # Send actual email
+        success = EmailService.send_invitation(
+            to_email=invitation.email,
+            coach_name=coach_name,
+            invitation_link=invitation_link,
+            personal_message=invitation.message
+        )
+        
+        if success:
+            logger.info(f"Successfully sent invitation email to {invitation.email}")
+        else:
+            logger.warning(f"Email service not configured or failed to send to {invitation.email}")
         
     except Exception as e:
         logger.error(f"Failed to send invitation email: {str(e)}")

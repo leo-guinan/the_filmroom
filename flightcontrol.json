@@ -60,7 +60,12 @@
             "CORS_ORIGINS": "https://filmroom.leoasaservice.com,https://coachapi.leoasaservice.com,https://d2i2sf9vq7cc6e.cloudfront.net,https://d1wbmmojehnr8o.cloudfront.net,http://localhost:3000",
             "CORS_ALLOW_CREDENTIALS": "true",
             "CORS_ALLOW_METHODS": "GET,POST,PUT,DELETE,OPTIONS,PATCH",
-            "CORS_ALLOW_HEADERS": "*"
+            "CORS_ALLOW_HEADERS": "*",
+            "SMTP_HOST": "smtp.gmail.com",
+            "SMTP_PORT": "587",
+            "SMTP_USER": "REPLACE_WITH_YOUR_EMAIL@gmail.com",
+            "SMTP_PASSWORD": "REPLACE_WITH_APP_PASSWORD",
+            "FROM_EMAIL": "REPLACE_WITH_YOUR_EMAIL@gmail.com"
            
           }
         },
