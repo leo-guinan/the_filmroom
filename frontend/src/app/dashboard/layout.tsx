@@ -84,7 +84,7 @@ export default function DashboardLayout({
     return null
   }
 
-  const isCoach = user.role === 'COACH'
+  const isCoach = user.role === 'COACH' || user.role === 'coach'
 
   const navigation = [
     { name: 'Dashboard', href: '/dashboard', icon: Home },

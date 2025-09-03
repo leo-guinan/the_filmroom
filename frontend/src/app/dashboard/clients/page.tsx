@@ -47,7 +47,7 @@ export default function ClientsPage() {
     const userStr = localStorage.getItem('user')
     if (userStr) {
       const user = JSON.parse(userStr)
-      if (user.role !== 'COACH') {
+      if (user.role !== 'COACH' && user.role !== 'coach') {
         router.push('/dashboard')
         return
       }

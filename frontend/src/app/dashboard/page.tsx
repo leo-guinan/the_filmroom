@@ -33,7 +33,7 @@ export default function DashboardPage() {
     return null
   }
 
-  const isCoach = user.role === 'COACH'
+  const isCoach = user.role === 'COACH' || user.role === 'coach'
 
   return (
     <div>

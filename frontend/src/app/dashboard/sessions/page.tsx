@@ -170,7 +170,7 @@ export default function SessionsPage() {
     <div>
       <div className="flex justify-between items-center mb-8">
         <h1 className="text-3xl font-bold">Sessions</h1>
-        {userRole === 'COACH' && (
+        {(userRole === 'COACH' || userRole === 'coach') && (
           <button
             onClick={createNewSession}
             className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
@@ -229,7 +229,7 @@ export default function SessionsPage() {
               ? "You don't have any completed sessions yet."
               : "You don't have any sessions yet."}
           </p>
-          {userRole === 'COACH' && filter !== 'completed' && (
+          {(userRole === 'COACH' || userRole === 'coach') && filter !== 'completed' && (
             <button
               onClick={createNewSession}
               className="mt-4 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
@@ -268,7 +268,7 @@ export default function SessionsPage() {
                     </div>
                     <div className="flex items-center gap-1">
                       <Users className="h-4 w-4" />
-                      {userRole === 'COACH' 
+                      {(userRole === 'COACH' || userRole === 'coach') 
                         ? `Client: ${session.client_name}`
                         : `Coach: ${session.coach_name}`}
                     </div>
