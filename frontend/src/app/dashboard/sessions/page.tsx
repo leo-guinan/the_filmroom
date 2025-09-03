@@ -37,7 +37,7 @@ export default function SessionsPage() {
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
   const [filter, setFilter] = useState<'all' | 'upcoming' | 'completed'>('all')
-  const [userRole, setUserRole] = useState<'COACH' | 'CLIENT'>('CLIENT')
+  const [userRole, setUserRole] = useState<string>('CLIENT')
 
   useEffect(() => {
     // Get user role from localStorage
