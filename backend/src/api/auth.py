@@ -21,6 +21,7 @@ class UserRegister(BaseModel):
     first_name: str
     last_name: str
     role: str = Field(default="CLIENT", pattern="^(COACH|CLIENT|coach|client)$")
+    invitation_token: Optional[str] = None  # For accepting invitations
 
 
 class UserLogin(BaseModel):
@@ -63,9 +64,44 @@ async def register(
 ):
     """Register a new user."""
     try:
-        # Convert role string to enum
-        role_str = user_data.role.upper()
-        role = UserRole.COACH if role_str == "COACH" else UserRole.CLIENT
+        # Handle invitation if token provided
+        invitation = None
+        coach_id = None
+        
+        if user_data.invitation_token:
+            from src.models import Invitation, InvitationStatus, CoachClientRelationship
+            from datetime import datetime
+            
+            invitation = db.query(Invitation).filter(
+                Invitation.token == user_data.invitation_token,
+                Invitation.status == InvitationStatus.PENDING
+            ).first()
+            
+            if not invitation:
+                raise HTTPException(
+                    status_code=status.HTTP_400_BAD_REQUEST,
+                    detail="Invalid or expired invitation token"
+                )
+            
+            if invitation.is_expired:
+                raise HTTPException(
+                    status_code=status.HTTP_400_BAD_REQUEST,
+                    detail="This invitation has expired"
+                )
+            
+            if invitation.email != user_data.email:
+                raise HTTPException(
+                    status_code=status.HTTP_400_BAD_REQUEST,
+                    detail="This invitation was sent to a different email address"
+                )
+            
+            coach_id = invitation.coach_id
+            # Force role to CLIENT for invitation signups
+            role = UserRole.CLIENT
+        else:
+            # Convert role string to enum for normal registration
+            role_str = user_data.role.upper()
+            role = UserRole.COACH if role_str == "COACH" else UserRole.CLIENT
         
         # Combine first and last name for full_name
         full_name = f"{user_data.first_name} {user_data.last_name}"
@@ -78,6 +114,23 @@ async def register(
             full_name=full_name,
             role=role
         )
+        
+        # If invitation was used, update it and create relationship
+        if invitation:
+            invitation.status = InvitationStatus.ACCEPTED
+            invitation.accepted_at = datetime.utcnow()
+            invitation.client_id = user.id
+            
+            # Create coach-client relationship
+            relationship = CoachClientRelationship(
+                coach_id=coach_id,
+                client_id=user.id,
+                invitation_id=invitation.id
+            )
+            db.add(relationship)
+            db.commit()
+            
+            logger.info(f"Invitation accepted: {user.email} joined as client of coach {coach_id}")
         
         # Create tokens
         access_token = AuthService.create_access_token(data={"sub": user.email})

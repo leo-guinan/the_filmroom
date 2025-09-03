@@ -42,6 +42,14 @@ class User(Base):
     client_sessions = relationship("Session", foreign_keys="Session.client_id", back_populates="client")
     client_profiles = relationship("ClientProfile", foreign_keys="ClientProfile.client_id", back_populates="client")
     coach_profiles = relationship("ClientProfile", foreign_keys="ClientProfile.coach_id", back_populates="coach")
+    
+    # Invitation relationships
+    sent_invitations = relationship("Invitation", foreign_keys="Invitation.coach_id", back_populates="coach")
+    received_invitation = relationship("Invitation", foreign_keys="Invitation.client_id", back_populates="client", uselist=False)
+    
+    # Coach-Client relationships
+    coach_relationships = relationship("CoachClientRelationship", foreign_keys="CoachClientRelationship.coach_id", back_populates="coach")
+    client_relationships = relationship("CoachClientRelationship", foreign_keys="CoachClientRelationship.client_id", back_populates="client")
     notes_written = relationship("ClientNote", back_populates="author")
     
     def __repr__(self):

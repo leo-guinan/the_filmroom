@@ -1,15 +1,22 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import Link from 'next/link'
-import { useRouter } from 'next/navigation'
-import { Video, Eye, EyeOff } from 'lucide-react'
+import { useRouter, useSearchParams } from 'next/navigation'
+import { Video, Eye, EyeOff, UserPlus } from 'lucide-react'
+import { getApiUrl } from '@/lib/api'
 
 export default function SignupPage() {
   const router = useRouter()
+  const searchParams = useSearchParams()
   const [showPassword, setShowPassword] = useState(false)
   const [isLoading, setIsLoading] = useState(false)
   const [error, setError] = useState('')
+  const [invitationToken, setInvitationToken] = useState<string | null>(null)
+  const [invitationDetails, setInvitationDetails] = useState<{
+    email: string
+    coachName?: string
+  } | null>(null)
   const [formData, setFormData] = useState({
     firstName: '',
     lastName: '',
@@ -18,6 +25,17 @@ export default function SignupPage() {
     confirmPassword: '',
     role: 'CLIENT'
   })
+
+  useEffect(() => {
+    const token = searchParams.get('invitation')
+    if (token) {
+      setInvitationToken(token)
+      // Parse the invitation token to get email
+      // In a real implementation, you might want to verify the token with the backend
+      // For now, we'll just set that it's an invitation signup
+      setFormData(prev => ({ ...prev, role: 'CLIENT' }))
+    }
+  }, [searchParams])
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     setFormData({
@@ -44,7 +62,8 @@ export default function SignupPage() {
     setIsLoading(true)
 
     try {
-      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/v1/auth/register`, {
+      const apiUrl = getApiUrl()
+      const response = await fetch(`${apiUrl}/api/v1/auth/register`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -54,7 +73,8 @@ export default function SignupPage() {
           password: formData.password,
           first_name: formData.firstName,
           last_name: formData.lastName,
-          role: formData.role
+          role: formData.role,
+          invitation_token: invitationToken
         }),
       })
 
@@ -85,7 +105,16 @@ export default function SignupPage() {
           </Link>
 
           <div className="bg-white dark:bg-neutral-900 rounded-lg shadow-lg p-8">
-            <h1 className="text-2xl font-bold text-center mb-6">Create your account</h1>
+            <h1 className="text-2xl font-bold text-center mb-6">
+              {invitationToken ? 'Accept Invitation' : 'Create your account'}
+            </h1>
+            
+            {invitationToken && (
+              <div className="bg-blue-50 dark:bg-blue-900/20 text-blue-600 dark:text-blue-400 p-3 rounded-md mb-6 text-sm flex items-center">
+                <UserPlus className="h-4 w-4 mr-2" />
+                You've been invited to join The Film Room as a client
+              </div>
+            )}
             
             {error && (
               <div className="bg-red-50 dark:bg-red-900/20 text-red-600 dark:text-red-400 p-3 rounded-md mb-6 text-sm">
@@ -143,21 +172,23 @@ export default function SignupPage() {
                 />
               </div>
 
-              <div>
-                <label htmlFor="role" className="block text-sm font-medium mb-2">
-                  I am a
-                </label>
-                <select
-                  id="role"
-                  name="role"
-                  value={formData.role}
-                  onChange={handleChange}
-                  className="w-full px-3 py-2 border border-neutral-300 dark:border-neutral-700 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-neutral-800"
-                >
-                  <option value="CLIENT">Client</option>
-                  <option value="COACH">Coach</option>
-                </select>
-              </div>
+              {!invitationToken && (
+                <div>
+                  <label htmlFor="role" className="block text-sm font-medium mb-2">
+                    I am a
+                  </label>
+                  <select
+                    id="role"
+                    name="role"
+                    value={formData.role}
+                    onChange={handleChange}
+                    className="w-full px-3 py-2 border border-neutral-300 dark:border-neutral-700 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-neutral-800"
+                  >
+                    <option value="CLIENT">Client</option>
+                    <option value="COACH">Coach</option>
+                  </select>
+                </div>
+              )}
 
               <div>
                 <label htmlFor="password" className="block text-sm font-medium mb-2">
