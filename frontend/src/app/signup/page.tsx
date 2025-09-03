@@ -1,12 +1,12 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, Suspense } from 'react'
 import Link from 'next/link'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { Video, Eye, EyeOff, UserPlus } from 'lucide-react'
 import { getApiUrl } from '@/lib/api'
 
-export default function SignupPage() {
+function SignupForm() {
   const router = useRouter()
   const searchParams = useSearchParams()
   const [showPassword, setShowPassword] = useState(false)
@@ -252,5 +252,27 @@ export default function SignupPage() {
         </div>
       </div>
     </div>
+  )
+}
+
+export default function SignupPage() {
+  return (
+    <Suspense fallback={
+      <div className="min-h-screen bg-gradient-to-b from-neutral-50 to-neutral-100 dark:from-neutral-950 dark:to-neutral-900 flex flex-col justify-center">
+        <div className="container mx-auto px-4 py-12">
+          <div className="max-w-md mx-auto">
+            <div className="flex items-center justify-center space-x-2 mb-8">
+              <Video className="h-8 w-8 text-blue-600" />
+              <span className="text-2xl font-bold">The Film Room</span>
+            </div>
+            <div className="bg-white dark:bg-neutral-900 rounded-lg shadow-lg p-8">
+              <div className="text-center">Loading...</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    }>
+      <SignupForm />
+    </Suspense>
   )
 }
