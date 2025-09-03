@@ -30,7 +30,7 @@ export default function NewSessionPage() {
     const userStr = localStorage.getItem('user')
     if (userStr) {
       const user = JSON.parse(userStr)
-      if (user.role !== 'coach') {
+      if (user.role !== 'COACH') {
         router.push('/dashboard/sessions')
         return
       }

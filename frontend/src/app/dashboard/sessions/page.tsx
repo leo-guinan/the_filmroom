@@ -37,14 +37,14 @@ export default function SessionsPage() {
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
   const [filter, setFilter] = useState<'all' | 'upcoming' | 'completed'>('all')
-  const [userRole, setUserRole] = useState<'coach' | 'client'>('client')
+  const [userRole, setUserRole] = useState<'COACH' | 'CLIENT'>('CLIENT')
 
   useEffect(() => {
     // Get user role from localStorage
     const userStr = localStorage.getItem('user')
     if (userStr) {
       const user = JSON.parse(userStr)
-      setUserRole(user.role)
+      setUserRole(user.role) // Will be 'COACH' or 'CLIENT' from backend
     }
     
     fetchSessions()
@@ -170,7 +170,7 @@ export default function SessionsPage() {
     <div>
       <div className="flex justify-between items-center mb-8">
         <h1 className="text-3xl font-bold">Sessions</h1>
-        {userRole === 'coach' && (
+        {userRole === 'COACH' && (
           <button
             onClick={createNewSession}
             className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
@@ -229,7 +229,7 @@ export default function SessionsPage() {
               ? "You don't have any completed sessions yet."
               : "You don't have any sessions yet."}
           </p>
-          {userRole === 'coach' && filter !== 'completed' && (
+          {userRole === 'COACH' && filter !== 'completed' && (
             <button
               onClick={createNewSession}
               className="mt-4 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
@@ -268,7 +268,7 @@ export default function SessionsPage() {
                     </div>
                     <div className="flex items-center gap-1">
                       <Users className="h-4 w-4" />
-                      {userRole === 'coach' 
+                      {userRole === 'COACH' 
                         ? `Client: ${session.client_name}`
                         : `Coach: ${session.coach_name}`}
                     </div>
