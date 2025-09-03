@@ -63,7 +63,7 @@ export default function ClientsPage() {
       const apiUrl = getApiUrl()
       
       // Fetch clients
-      const clientsResponse = await fetch(`${apiUrl}/api/v1/clients/`, {
+      const clientsResponse = await fetch(`${apiUrl}/api/v1/clients`, {
         headers: {
           'Authorization': `Bearer ${accessToken}`,
         },
@@ -75,7 +75,7 @@ export default function ClientsPage() {
       }
 
       // Fetch invitations
-      const invitationsResponse = await fetch(`${apiUrl}/api/v1/invitations/`, {
+      const invitationsResponse = await fetch(`${apiUrl}/api/v1/invitations`, {
         headers: {
           'Authorization': `Bearer ${accessToken}`,
         },
@@ -101,7 +101,7 @@ export default function ClientsPage() {
       const accessToken = localStorage.getItem('access_token')
       const apiUrl = getApiUrl()
       
-      const response = await fetch(`${apiUrl}/api/v1/invite/`, {
+      const response = await fetch(`${apiUrl}/api/v1/invite`, {
         method: 'POST',
         headers: {
           'Authorization': `Bearer ${accessToken}`,
@@ -137,7 +137,7 @@ export default function ClientsPage() {
       const accessToken = localStorage.getItem('access_token')
       const apiUrl = getApiUrl()
       
-      const response = await fetch(`${apiUrl}/api/v1/invitations/${invitationId}/resend/`, {
+      const response = await fetch(`${apiUrl}/api/v1/invitations/${invitationId}/resend`, {
         method: 'POST',
         headers: {
           'Authorization': `Bearer ${accessToken}`,
@@ -163,7 +163,7 @@ export default function ClientsPage() {
       const accessToken = localStorage.getItem('access_token')
       const apiUrl = getApiUrl()
       
-      const response = await fetch(`${apiUrl}/api/v1/invitations/${invitationId}/cancel/`, {
+      const response = await fetch(`${apiUrl}/api/v1/invitations/${invitationId}/cancel`, {
         method: 'POST',
         headers: {
           'Authorization': `Bearer ${accessToken}`,
@@ -188,7 +188,7 @@ export default function ClientsPage() {
       const accessToken = localStorage.getItem('access_token')
       const apiUrl = getApiUrl()
       
-      const response = await fetch(`${apiUrl}/api/v1/clients/${relationshipId}/`, {
+      const response = await fetch(`${apiUrl}/api/v1/clients/${relationshipId}`, {
         method: 'DELETE',
         headers: {
           'Authorization': `Bearer ${accessToken}`,
@@ -239,7 +239,7 @@ export default function ClientsPage() {
   }
 
   return (
-    <div className="container mx-auto px-4 py-8">
+    <div>
       <div className="flex justify-between items-center mb-8">
         <h1 className="text-3xl font-bold">Clients</h1>
         <button
