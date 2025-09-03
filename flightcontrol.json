@@ -61,11 +61,10 @@
             "CORS_ALLOW_CREDENTIALS": "true",
             "CORS_ALLOW_METHODS": "GET,POST,PUT,DELETE,OPTIONS,PATCH",
             "CORS_ALLOW_HEADERS": "*",
-            "SMTP_HOST": "smtp.gmail.com",
-            "SMTP_PORT": "587",
-            "SMTP_USER": "REPLACE_WITH_YOUR_EMAIL@gmail.com",
-            "SMTP_PASSWORD": "REPLACE_WITH_APP_PASSWORD",
-            "FROM_EMAIL": "REPLACE_WITH_YOUR_EMAIL@gmail.com"
+            "LOOPS_API_KEY": "REPLACE_WITH_YOUR_LOOPS_API_KEY",
+            "LOOPS_INVITATION_EMAIL_ID": "client-invitation",
+            "LOOPS_REMINDER_EMAIL_ID": "session-reminder",
+            "LOOPS_WELCOME_EMAIL_ID": "welcome-email"
            
           }
         },

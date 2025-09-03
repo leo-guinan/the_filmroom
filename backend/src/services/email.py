@@ -1,15 +1,15 @@
-import smtplib
-from email.mime.text import MIMEText
-from email.mime.multipart import MIMEMultipart
-from typing import Optional
 import os
+import httpx
+from typing import Optional, Dict, Any
 from src.core import get_logger
 
 logger = get_logger(__name__)
 
 
 class EmailService:
-    """Email service for sending notifications."""
+    """Email service using Loops.so for transactional emails."""
+    
+    LOOPS_API_URL = "https://app.loops.so/api/v1"
     
     @staticmethod
     def send_invitation(
@@ -18,162 +18,168 @@ class EmailService:
         invitation_link: str,
         personal_message: Optional[str] = None
     ) -> bool:
-        """Send invitation email to a new client."""
+        """Send invitation email to a new client using Loops.so."""
         
-        # Get email configuration from environment variables
-        smtp_host = os.getenv('SMTP_HOST', 'smtp.gmail.com')
-        smtp_port = int(os.getenv('SMTP_PORT', '587'))
-        smtp_user = os.getenv('SMTP_USER', '')
-        smtp_password = os.getenv('SMTP_PASSWORD', '')
-        from_email = os.getenv('FROM_EMAIL', smtp_user)
+        # Get Loops.so API key from environment
+        loops_api_key = os.getenv('LOOPS_API_KEY', '')
         
-        if not smtp_user or not smtp_password:
+        if not loops_api_key:
             logger.warning(
-                "Email credentials not configured. "
-                "Set SMTP_USER and SMTP_PASSWORD environment variables to enable email sending."
+                "Loops.so API key not configured. "
+                "Set LOOPS_API_KEY environment variable to enable email sending."
             )
             logger.info(f"Would send invitation to {to_email} with link: {invitation_link}")
             return False
         
         try:
-            # Create message
-            msg = MIMEMultipart('alternative')
-            msg['Subject'] = f"{coach_name} has invited you to The Film Room"
-            msg['From'] = from_email
-            msg['To'] = to_email
+            # First, add or update the contact in Loops
+            contact_data = {
+                "email": to_email,
+                "source": "invitation",
+                "subscribed": True
+            }
             
-            # Create the HTML content
-            html_content = f"""
-            <!DOCTYPE html>
-            <html>
-            <head>
-                <style>
-                    body {{
-                        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
-                        line-height: 1.6;
-                        color: #333;
-                        max-width: 600px;
-                        margin: 0 auto;
-                        padding: 20px;
-                    }}
-                    .header {{
-                        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-                        color: white;
-                        padding: 30px;
-                        border-radius: 10px 10px 0 0;
-                        text-align: center;
-                    }}
-                    .content {{
-                        background: white;
-                        padding: 30px;
-                        border: 1px solid #e1e1e1;
-                        border-radius: 0 0 10px 10px;
-                    }}
-                    .button {{
-                        display: inline-block;
-                        padding: 12px 30px;
-                        background: #667eea;
-                        color: white;
-                        text-decoration: none;
-                        border-radius: 5px;
-                        margin: 20px 0;
-                    }}
-                    .message-box {{
-                        background: #f7f7f7;
-                        padding: 15px;
-                        border-left: 4px solid #667eea;
-                        margin: 20px 0;
-                        border-radius: 4px;
-                    }}
-                    .footer {{
-                        margin-top: 30px;
-                        padding-top: 20px;
-                        border-top: 1px solid #e1e1e1;
-                        text-align: center;
-                        color: #666;
-                        font-size: 14px;
-                    }}
-                </style>
-            </head>
-            <body>
-                <div class="header">
-                    <h1>🎬 Welcome to The Film Room</h1>
-                    <p>Your coaching journey starts here</p>
-                </div>
-                <div class="content">
-                    <h2>Hi there!</h2>
-                    <p><strong>{coach_name}</strong> has invited you to join The Film Room, a platform for personalized coaching sessions.</p>
+            with httpx.Client() as client:
+                # Add/update contact
+                contact_response = client.post(
+                    f"{EmailService.LOOPS_API_URL}/contacts/update",
+                    json=contact_data,
+                    headers={
+                        "Authorization": f"Bearer {loops_api_key}",
+                        "Content-Type": "application/json"
+                    }
+                )
+                
+                if not contact_response.is_success:
+                    logger.error(f"Failed to add contact to Loops: {contact_response.text}")
+                    return False
+                
+                # Send transactional email
+                email_data = {
+                    "transactionalId": os.getenv('LOOPS_INVITATION_EMAIL_ID', 'client-invitation'),
+                    "email": to_email,
+                    "dataVariables": {
+                        "coach_name": coach_name,
+                        "invitation_link": invitation_link,
+                        "personal_message": personal_message or "",
+                        "has_message": bool(personal_message)
+                    }
+                }
+                
+                # Send the transactional email
+                email_response = client.post(
+                    f"{EmailService.LOOPS_API_URL}/transactional",
+                    json=email_data,
+                    headers={
+                        "Authorization": f"Bearer {loops_api_key}",
+                        "Content-Type": "application/json"
+                    }
+                )
+                
+                if email_response.is_success:
+                    logger.info(f"Successfully sent invitation email to {to_email} via Loops.so")
+                    return True
+                else:
+                    logger.error(f"Failed to send email via Loops: {email_response.text}")
+                    return False
                     
-                    {f'''
-                    <div class="message-box">
-                        <strong>Personal message from {coach_name}:</strong><br>
-                        {personal_message}
-                    </div>
-                    ''' if personal_message else ''}
-                    
-                    <p>The Film Room provides:</p>
-                    <ul>
-                        <li>📹 Live video coaching sessions</li>
-                        <li>📅 Easy session scheduling</li>
-                        <li>📊 Progress tracking</li>
-                        <li>🔒 Secure and private platform</li>
-                    </ul>
-                    
-                    <center>
-                        <a href="{invitation_link}" class="button">Accept Invitation</a>
-                    </center>
-                    
-                    <p><small>Or copy and paste this link into your browser:</small><br>
-                    <small>{invitation_link}</small></p>
-                    
-                    <div class="footer">
-                        <p>This invitation will expire in 7 days.</p>
-                        <p>If you didn't expect this invitation, you can safely ignore this email.</p>
-                    </div>
-                </div>
-            </body>
-            </html>
-            """
-            
-            # Create plain text version
-            text_content = f"""
-{coach_name} has invited you to The Film Room
-
-Hi there!
-
-{coach_name} has invited you to join The Film Room, a platform for personalized coaching sessions.
-
-{f"Personal message from {coach_name}: {personal_message}" if personal_message else ""}
-
-The Film Room provides:
-- Live video coaching sessions
-- Easy session scheduling  
-- Progress tracking
-- Secure and private platform
-
-Accept your invitation here:
-{invitation_link}
-
-This invitation will expire in 7 days.
-
-If you didn't expect this invitation, you can safely ignore this email.
-            """
-            
-            # Attach parts
-            part1 = MIMEText(text_content, 'plain')
-            part2 = MIMEText(html_content, 'html')
-            msg.attach(part1)
-            msg.attach(part2)
-            
-            # Send email
-            with smtplib.SMTP(smtp_host, smtp_port) as server:
-                server.starttls()
-                server.login(smtp_user, smtp_password)
-                server.send_message(msg)
-            
-            logger.info(f"Successfully sent invitation email to {to_email}")
-            return True
-            
         except Exception as e:
-            logger.error(f"Failed to send email to {to_email}: {str(e)}")
+            logger.error(f"Failed to send email to {to_email} via Loops.so: {str(e)}")
+            return False
+    
+    @staticmethod
+    def send_session_reminder(
+        to_email: str,
+        client_name: str,
+        coach_name: str,
+        session_time: str,
+        session_link: str
+    ) -> bool:
+        """Send session reminder email using Loops.so."""
+        
+        loops_api_key = os.getenv('LOOPS_API_KEY', '')
+        
+        if not loops_api_key:
+            logger.warning("Loops.so API key not configured")
+            return False
+        
+        try:
+            with httpx.Client() as client:
+                # Send transactional email
+                email_data = {
+                    "transactionalId": os.getenv('LOOPS_REMINDER_EMAIL_ID', 'session-reminder'),
+                    "email": to_email,
+                    "dataVariables": {
+                        "client_name": client_name,
+                        "coach_name": coach_name,
+                        "session_time": session_time,
+                        "session_link": session_link
+                    }
+                }
+                
+                email_response = client.post(
+                    f"{EmailService.LOOPS_API_URL}/transactional",
+                    json=email_data,
+                    headers={
+                        "Authorization": f"Bearer {loops_api_key}",
+                        "Content-Type": "application/json"
+                    }
+                )
+                
+                if email_response.is_success:
+                    logger.info(f"Successfully sent session reminder to {to_email}")
+                    return True
+                else:
+                    logger.error(f"Failed to send reminder: {email_response.text}")
+                    return False
+                    
+        except Exception as e:
+            logger.error(f"Failed to send reminder to {to_email}: {str(e)}")
+            return False
+    
+    @staticmethod
+    def send_welcome_email(
+        to_email: str,
+        user_name: str,
+        is_coach: bool = False
+    ) -> bool:
+        """Send welcome email to new users using Loops.so."""
+        
+        loops_api_key = os.getenv('LOOPS_API_KEY', '')
+        
+        if not loops_api_key:
+            logger.warning("Loops.so API key not configured")
+            return False
+        
+        try:
+            with httpx.Client() as client:
+                # Send transactional email
+                template_id = 'welcome-coach' if is_coach else 'welcome-client'
+                email_data = {
+                    "transactionalId": os.getenv('LOOPS_WELCOME_EMAIL_ID', template_id),
+                    "email": to_email,
+                    "dataVariables": {
+                        "user_name": user_name,
+                        "user_type": "coach" if is_coach else "client"
+                    }
+                }
+                
+                email_response = client.post(
+                    f"{EmailService.LOOPS_API_URL}/transactional",
+                    json=email_data,
+                    headers={
+                        "Authorization": f"Bearer {loops_api_key}",
+                        "Content-Type": "application/json"
+                    }
+                )
+                
+                if email_response.is_success:
+                    logger.info(f"Successfully sent welcome email to {to_email}")
+                    return True
+                else:
+                    logger.error(f"Failed to send welcome email: {email_response.text}")
+                    return False
+                    
+        except Exception as e:
+            logger.error(f"Failed to send welcome email to {to_email}: {str(e)}")
             return False
