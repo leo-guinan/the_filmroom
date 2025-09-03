@@ -22,7 +22,7 @@ class Invitation(Base):
     
     # Invitation details
     email = Column(String, nullable=False, index=True)
-    token = Column(String, nullable=False, unique=True, index=True, default=lambda: secrets.urlsafe_token(32))
+    token = Column(String, nullable=False, unique=True, index=True, default=lambda: secrets.token_urlsafe(32))
     status = Column(Enum(InvitationStatus), nullable=False, default=InvitationStatus.PENDING)
     
     # Personal details (optional, for personalization)
