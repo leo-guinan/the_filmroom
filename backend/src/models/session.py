@@ -32,6 +32,9 @@ class Session(Base):
     room_sid = Column(String, nullable=True)  # LiveKit room session ID
     recording_url = Column(String, nullable=True)
     
+    # Cal.com integration
+    cal_booking_id = Column(String, nullable=True)
+    
     # Participants
     coach_id = Column(String, ForeignKey("users.id"), nullable=False)
     client_id = Column(String, ForeignKey("users.id"), nullable=False)

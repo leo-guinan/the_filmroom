@@ -64,7 +64,9 @@
             "LOOPS_API_KEY": "REPLACE_WITH_YOUR_LOOPS_API_KEY",
             "LOOPS_INVITATION_EMAIL_ID": "client-invitation",
             "LOOPS_REMINDER_EMAIL_ID": "session-reminder",
-            "LOOPS_WELCOME_EMAIL_ID": "welcome-email"
+            "LOOPS_WELCOME_EMAIL_ID": "welcome-email",
+            "CAL_API_KEY": "REPLACE_WITH_YOUR_CAL_API_KEY",
+            "CAL_DOMAIN": "cal.com"
            
           }
         },

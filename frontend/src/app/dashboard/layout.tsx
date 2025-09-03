@@ -88,11 +88,13 @@ export default function DashboardLayout({
 
   const navigation = [
     { name: 'Dashboard', href: '/dashboard', icon: Home },
-    { name: 'Sessions', href: '/dashboard/sessions', icon: Calendar },
+    { name: 'Sessions', href: '/dashboard/sessions', icon: Video },
     ...(isCoach ? [
       { name: 'Clients', href: '/dashboard/clients', icon: Users },
       { name: 'Reports', href: '/dashboard/reports', icon: FileText },
-    ] : []),
+    ] : [
+      { name: 'Schedule', href: '/dashboard/schedule', icon: Calendar },
+    ]),
     { name: 'Settings', href: '/dashboard/settings', icon: Settings },
   ]
 

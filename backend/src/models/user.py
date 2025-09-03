@@ -28,6 +28,12 @@ class User(Base):
     bio = Column(Text, nullable=True)
     avatar_url = Column(String, nullable=True)
     
+    # Cal.com integration
+    cal_username = Column(String, nullable=True, unique=True)
+    cal_user_id = Column(String, nullable=True)
+    cal_event_type_id = Column(String, nullable=True)
+    cal_booking_url = Column(String, nullable=True)
+    
     # Status fields
     is_active = Column(Boolean, default=True)
     is_verified = Column(Boolean, default=False)
