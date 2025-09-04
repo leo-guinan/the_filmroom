@@ -12,6 +12,7 @@ from src.api import health_router, auth_router, users_router, sessions_router
 from src.api.video import router as video_router
 from src.api.invitations import router as invitations_router
 from src.api.calendar import router as calendar_router
+from src.api.webhooks import router as webhooks_router
 
 # Set up logging
 setup_logging()
@@ -210,6 +211,7 @@ app.include_router(sessions_router, prefix=f"/api/{settings.api_version}/session
 app.include_router(video_router, prefix=f"/api/{settings.api_version}/video", tags=["video"])
 app.include_router(invitations_router, prefix=f"/api/{settings.api_version}", tags=["invitations"])
 app.include_router(calendar_router, prefix=f"/api/{settings.api_version}/calendar", tags=["calendar"])
+app.include_router(webhooks_router, prefix=f"/webhooks", tags=["webhooks"])
 
 
 @app.get("/")

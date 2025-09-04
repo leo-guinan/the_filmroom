@@ -30,7 +30,16 @@ class Session(Base):
     # LiveKit integration
     room_name = Column(String, nullable=True, unique=True, index=True)
     room_sid = Column(String, nullable=True)  # LiveKit room session ID
+    
+    # Recording information
     recording_url = Column(String, nullable=True)
+    recording_s3_key = Column(String, nullable=True)
+    recording_egress_id = Column(String, nullable=True)
+    recording_status = Column(String, nullable=True, default="pending")  # pending, recording, completed, failed
+    recording_duration_seconds = Column(Integer, nullable=True)
+    recording_size_bytes = Column(Integer, nullable=True)
+    recording_started_at = Column(DateTime, nullable=True)
+    recording_completed_at = Column(DateTime, nullable=True)
     
     # Cal.com integration
     cal_booking_id = Column(String, nullable=True)

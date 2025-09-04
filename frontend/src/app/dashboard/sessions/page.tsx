@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
-import { Calendar, Clock, Video, Plus, Users, ChevronRight, AlertCircle } from 'lucide-react'
+import { Calendar, Clock, Video, Plus, Users, ChevronRight, AlertCircle, Download, Loader } from 'lucide-react'
 import { getApiUrl } from '@/lib/api'
 
 interface Session {
@@ -20,6 +20,9 @@ interface Session {
   started_at: string | null
   ended_at: string | null
   actual_duration_minutes: number | null
+  recording_url: string | null
+  recording_status: string | null
+  recording_duration_seconds: number | null
   created_at: string
   updated_at: string
 }
@@ -297,11 +300,39 @@ export default function SessionsPage() {
                 </div>
               </div>
 
-              {session.status === 'completed' && session.actual_duration_minutes && (
+              {session.status === 'completed' && (
                 <div className="mt-4 pt-4 border-t border-gray-200 dark:border-gray-700">
-                  <p className="text-sm text-gray-600 dark:text-gray-400">
-                    Session duration: {session.actual_duration_minutes} minutes
-                  </p>
+                  <div className="flex justify-between items-center">
+                    <div>
+                      {session.actual_duration_minutes && (
+                        <p className="text-sm text-gray-600 dark:text-gray-400">
+                          Session duration: {session.actual_duration_minutes} minutes
+                        </p>
+                      )}
+                    </div>
+                    <div>
+                      {session.recording_status === 'completed' && session.recording_url ? (
+                        <a
+                          href={session.recording_url}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="flex items-center gap-2 px-3 py-1.5 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors text-sm"
+                        >
+                          <Download className="h-4 w-4" />
+                          Download Recording
+                        </a>
+                      ) : session.recording_status === 'recording' ? (
+                        <div className="flex items-center gap-2 text-sm text-amber-600 dark:text-amber-400">
+                          <Loader className="h-4 w-4 animate-spin" />
+                          Recording in progress...
+                        </div>
+                      ) : session.recording_status === 'pending' ? (
+                        <div className="text-sm text-gray-500 dark:text-gray-400">
+                          Recording will start when session begins
+                        </div>
+                      ) : null}
+                    </div>
+                  </div>
                 </div>
               )}
             </div>

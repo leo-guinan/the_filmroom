@@ -1,0 +1,38 @@
+{
+  "name": "processor",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {
+    "dev": "nodemon --exec tsx src/index.ts",
+    "build": "tsc",
+    "start": "node dist/index.js",
+    "prisma:generate": "prisma generate",
+    "prisma:migrate": "prisma migrate dev",
+    "prisma:studio": "prisma studio",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "description": "",
+  "dependencies": {
+    "@aws-sdk/client-s3": "^3.879.0",
+    "@mastra/core": "^0.15.3",
+    "@mastra/engine": "^0.1.0-alpha.84",
+    "@prisma/client": "^6.15.0",
+    "@types/bull": "^3.15.9",
+    "@types/express": "^5.0.3",
+    "@types/node": "^24.3.1",
+    "aws-sdk": "^2.1692.0",
+    "axios": "^1.11.0",
+    "bull": "^4.16.5",
+    "dotenv": "^17.2.2",
+    "express": "^5.1.0",
+    "ioredis": "^5.7.0",
+    "nodemon": "^3.1.10",
+    "openai": "^5.19.1",
+    "prisma": "^6.15.0",
+    "tsx": "^4.20.5",
+    "typescript": "^5.9.2"
+  }
+}

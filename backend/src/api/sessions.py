@@ -47,6 +47,9 @@ class SessionResponse(BaseModel):
     started_at: Optional[datetime]
     ended_at: Optional[datetime]
     actual_duration_minutes: Optional[int]
+    recording_url: Optional[str]
+    recording_status: Optional[str]
+    recording_duration_seconds: Optional[int]
     created_at: datetime
     updated_at: datetime
 
@@ -131,6 +134,9 @@ async def create_session(
         started_at=session.started_at,
         ended_at=session.ended_at,
         actual_duration_minutes=session.actual_duration_minutes,
+        recording_url=session.recording_url,
+        recording_status=session.recording_status,
+        recording_duration_seconds=session.recording_duration_seconds,
         created_at=session.created_at,
         updated_at=session.updated_at
     )
@@ -191,6 +197,9 @@ async def list_sessions(
             started_at=session.started_at,
             ended_at=session.ended_at,
             actual_duration_minutes=session.actual_duration_minutes,
+            recording_url=session.recording_url,
+            recording_status=session.recording_status,
+            recording_duration_seconds=session.recording_duration_seconds,
             created_at=session.created_at,
             updated_at=session.updated_at
         ))
@@ -240,6 +249,9 @@ async def get_session(
         started_at=session.started_at,
         ended_at=session.ended_at,
         actual_duration_minutes=session.actual_duration_minutes,
+        recording_url=session.recording_url,
+        recording_status=session.recording_status,
+        recording_duration_seconds=session.recording_duration_seconds,
         created_at=session.created_at,
         updated_at=session.updated_at
     )
@@ -370,6 +382,9 @@ async def update_session(
         started_at=session.started_at,
         ended_at=session.ended_at,
         actual_duration_minutes=session.actual_duration_minutes,
+        recording_url=session.recording_url,
+        recording_status=session.recording_status,
+        recording_duration_seconds=session.recording_duration_seconds,
         created_at=session.created_at,
         updated_at=session.updated_at
     )
@@ -432,9 +447,71 @@ async def end_session(
         started_at=session.started_at,
         ended_at=session.ended_at,
         actual_duration_minutes=session.actual_duration_minutes,
+        recording_url=session.recording_url,
+        recording_status=session.recording_status,
+        recording_duration_seconds=session.recording_duration_seconds,
         created_at=session.created_at,
         updated_at=session.updated_at
     )
+
+
+@router.get("/{session_id}/recording")
+async def get_session_recording(
+    session_id: str,
+    current_user: User = Depends(get_current_active_user),
+    db: DBSession = Depends(get_db)
+):
+    """Get the recording URL for a session."""
+    
+    session = db.query(Session).filter(
+        Session.id == session_id,
+        or_(
+            Session.coach_id == current_user.id,
+            Session.client_id == current_user.id
+        )
+    ).first()
+    
+    if not session:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Session not found"
+        )
+    
+    if not session.recording_url:
+        if session.recording_status == "recording":
+            return {
+                "status": "recording",
+                "message": "Recording is still in progress"
+            }
+        elif session.recording_status == "pending":
+            return {
+                "status": "pending",
+                "message": "Recording has not started yet"
+            }
+        else:
+            raise HTTPException(
+                status_code=status.HTTP_404_NOT_FOUND,
+                detail="No recording available for this session"
+            )
+    
+    # If recording exists and we have an S3 key, generate a fresh presigned URL
+    if session.recording_s3_key:
+        from src.services.recording import RecordingService
+        recording_service = RecordingService()
+        fresh_url = recording_service.get_recording_url(
+            session.recording_s3_key,
+            expiry_seconds=3600  # 1 hour
+        )
+        if fresh_url:
+            session.recording_url = fresh_url
+            db.commit()
+    
+    return {
+        "status": "completed",
+        "recording_url": session.recording_url,
+        "duration_seconds": session.recording_duration_seconds,
+        "size_bytes": session.recording_size_bytes
+    }
 
 
 @router.delete("/{session_id}")

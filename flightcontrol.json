@@ -66,7 +66,11 @@
             "LOOPS_REMINDER_EMAIL_ID": "session-reminder",
             "LOOPS_WELCOME_EMAIL_ID": "welcome-email",
             "CAL_API_KEY": "REPLACE_WITH_YOUR_CAL_API_KEY",
-            "CAL_DOMAIN": "cal.com"
+            "CAL_DOMAIN": "cal.com",
+            "AWS_ACCESS_KEY_ID": "REPLACE_WITH_YOUR_AWS_KEY",
+            "AWS_SECRET_ACCESS_KEY": "REPLACE_WITH_YOUR_AWS_SECRET",
+            "AWS_S3_BUCKET": "filmroom-recordings",
+            "AWS_REGION": "us-east-1"
            
           }
         },
