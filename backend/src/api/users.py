@@ -32,6 +32,8 @@ class UserProfile(BaseModel):
 
 
 class UserUpdate(BaseModel):
+    first_name: Optional[str] = None
+    last_name: Optional[str] = None
     full_name: Optional[str] = None
     phone: Optional[str] = None
     timezone: Optional[str] = None
@@ -67,6 +69,78 @@ class ClientProfileUpdate(BaseModel):
     background_info: Optional[str] = None
     current_challenges: Optional[dict] = None
     achievements: Optional[dict] = None
+
+
+@router.get("/me")
+async def get_current_user_info(
+    current_user: User = Depends(get_current_active_user)
+):
+    """Get current user's information."""
+    return {
+        "id": current_user.id,
+        "email": current_user.email,
+        "first_name": current_user.full_name.split()[0] if current_user.full_name else "",
+        "last_name": " ".join(current_user.full_name.split()[1:]) if current_user.full_name and len(current_user.full_name.split()) > 1 else "",
+        "full_name": current_user.full_name,
+        "role": current_user.role.value if hasattr(current_user.role, 'value') else current_user.role,
+        "phone": current_user.phone,
+        "timezone": current_user.timezone or "America/New_York",
+        "bio": current_user.bio,
+        "avatar_url": current_user.avatar_url,
+        "created_at": current_user.created_at,
+        "updated_at": current_user.updated_at,
+        "is_active": current_user.is_active,
+        "is_verified": current_user.is_verified,
+        "cal_username": getattr(current_user, 'cal_username', None),
+        "cal_booking_url": getattr(current_user, 'cal_booking_url', None),
+    }
+
+
+@router.patch("/me")
+async def update_current_user(
+    update_data: UserUpdate,
+    current_user: User = Depends(get_current_active_user),
+    db: Session = Depends(get_db)
+):
+    """Update current user's information."""
+    # Build full name from first and last if provided
+    full_name = current_user.full_name
+    if update_data.first_name is not None or update_data.last_name is not None:
+        first = update_data.first_name or current_user.full_name.split()[0] if current_user.full_name else ""
+        last = update_data.last_name or " ".join(current_user.full_name.split()[1:]) if current_user.full_name and len(current_user.full_name.split()) > 1 else ""
+        full_name = f"{first} {last}".strip()
+    elif update_data.full_name is not None:
+        full_name = update_data.full_name
+    
+    updated_user = UserService.update_user(
+        db=db,
+        user=current_user,
+        full_name=full_name,
+        phone=update_data.phone,
+        timezone=update_data.timezone,
+        bio=update_data.bio
+    )
+    
+    logger.info(f"User updated via /me: {current_user.email}")
+    
+    return {
+        "id": updated_user.id,
+        "email": updated_user.email,
+        "first_name": updated_user.full_name.split()[0] if updated_user.full_name else "",
+        "last_name": " ".join(updated_user.full_name.split()[1:]) if updated_user.full_name and len(updated_user.full_name.split()) > 1 else "",
+        "full_name": updated_user.full_name,
+        "role": updated_user.role.value if hasattr(updated_user.role, 'value') else updated_user.role,
+        "phone": updated_user.phone,
+        "timezone": updated_user.timezone,
+        "bio": updated_user.bio,
+        "avatar_url": updated_user.avatar_url,
+        "created_at": updated_user.created_at,
+        "updated_at": updated_user.updated_at,
+        "is_active": updated_user.is_active,
+        "is_verified": updated_user.is_verified,
+        "cal_username": getattr(updated_user, 'cal_username', None),
+        "cal_booking_url": getattr(updated_user, 'cal_booking_url', None),
+    }
 
 
 @router.get("/profile", response_model=UserProfile)
