@@ -251,7 +251,7 @@ export default function IntegrationsPage() {
                       <div>
                         {integration.configUrl && !integration.comingSoon ? (
                           <button
-                            onClick={() => router.push(integration.configUrl)}
+                            onClick={() => router.push(integration.configUrl!)}
                             className="flex items-center gap-2 px-4 py-2 border border-neutral-300 dark:border-neutral-700 rounded-lg hover:bg-neutral-50 dark:hover:bg-neutral-800 transition-colors"
                           >
                             <Settings className="h-4 w-4" />
