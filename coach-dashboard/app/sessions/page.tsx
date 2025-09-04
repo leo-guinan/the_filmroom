@@ -1,7 +1,7 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import { Calendar, Upload, Video, Users, Download, Trash2, Plus, Filter, Search } from 'lucide-react'
+import { Calendar, Upload, Video, Users, Download, Trash2, Search } from 'lucide-react'
 
 interface S3Session {
   key: string
@@ -35,6 +35,7 @@ export default function SessionsPage() {
   useEffect(() => {
     fetchSessions()
     fetchClients()
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selectedClient])
 
   const fetchSessions = async () => {
