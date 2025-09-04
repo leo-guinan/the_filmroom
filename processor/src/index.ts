@@ -40,7 +40,7 @@ async function start() {
       nodeEnv: process.env.NODE_ENV,
       port: process.env.PORT || 3001,
       redisUrl: process.env.REDIS_URL ? 'configured' : 'not configured',
-      awsS3: process.env.AWS_ACCESS_KEY_ID ? 'configured' : 'not configured',
+      awsS3: process.env.APP_AWS_ACCESS_KEY_ID ? 'configured' : 'not configured',
       openai: process.env.OPENAI_API_KEY ? 'configured' : 'not configured',
     });
 
