@@ -14,6 +14,7 @@ from src.api.invitations import router as invitations_router
 from src.api.calendar import router as calendar_router
 from src.api.webhooks import router as webhooks_router
 from src.api.coach_sessions import router as coach_sessions_router
+from src.api.recordings import router as recordings_router
 
 # Set up logging
 setup_logging()
@@ -213,6 +214,7 @@ app.include_router(video_router, prefix=f"/api/{settings.api_version}/video", ta
 app.include_router(invitations_router, prefix=f"/api/{settings.api_version}", tags=["invitations"])
 app.include_router(calendar_router, prefix=f"/api/{settings.api_version}/calendar", tags=["calendar"])
 app.include_router(coach_sessions_router, prefix=f"/api/{settings.api_version}/coach", tags=["coach"])
+app.include_router(recordings_router, tags=["recordings"])
 app.include_router(webhooks_router, prefix=f"/webhooks", tags=["webhooks"])
 
 

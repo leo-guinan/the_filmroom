@@ -91,48 +91,17 @@
               "name": "filmroom.leoasaservice.com"
             }
           ],
-          "environmentVariables": {
+          "envVariables": {
             "NEXT_PUBLIC_API_URL": "https://coachapi.leoasaservice.com"
           }
-        },
-        {
-          "id": "coach-dashboard",
-          "name": "Coach Dashboard",
-          "type": "web",
-          "buildType": "nixpacks",
-          "source": {
-            "path": "/"
-          },
-          "target": {
-            "type": "fargate"
-          },
-          "ci": {
-            "type": "codebuild"
-          },
-          "cpu": 0.5,
-          "memory": 2,
-          "port": 3000,
-          "buildCommand": "pnpm install --frozen-lockfile && cd coach-dashboard && pnpm exec next build --turbopack",
-          "startCommand": "cd coach-dashboard && pnpm exec next start",
-          "minInstances": 1,
-          "maxInstances": 1,
-          "customDomains": [
-            {
-              "name": "coach-dashboard.leoasaservice.com"
-            }
-          ],
-          "envVariables": {
-            "NEXT_PUBLIC_API_URL": "https://coachapi.leoasaservice.com",
-            "DATABASE_URL": {
-              "fromService": {
-                "id": "postgres",
-                "value": "dbConnectionString"
-              }
-            }
-          }
-          
         }
       ]
+    },
+    {
+      "id": "session-storage",
+      "name": "Session Storage",
+      "type": "s3",
+      "bucketNameBase": "filmroom-recordings"
     }
   ]
 }

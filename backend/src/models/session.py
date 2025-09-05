@@ -41,6 +41,22 @@ class Session(Base):
     recording_started_at = Column(DateTime, nullable=True)
     recording_completed_at = Column(DateTime, nullable=True)
     
+    # External recording support
+    external_platform = Column(String, nullable=True)  # zoom, teams, meet, etc.
+    external_recording_url = Column(String, nullable=True)
+    s3_upload_key = Column(String, nullable=True, index=True)
+    s3_upload_status = Column(String, nullable=True, default="pending")  # pending, uploading, completed, failed
+    s3_upload_completed_at = Column(DateTime, nullable=True)
+    
+    # Transcript and analysis
+    transcript = Column(Text, nullable=True)
+    transcript_status = Column(String, nullable=True, default="pending")  # pending, processing, completed, failed
+    analysis = Column(JSON, nullable=True)
+    analysis_status = Column(String, nullable=True, default="pending")  # pending, processing, completed, failed
+    
+    # Multiple participants support
+    participants = Column(JSON, nullable=True)  # List of participant user IDs
+    
     # Cal.com integration
     cal_booking_id = Column(String, nullable=True)
     
@@ -70,6 +86,7 @@ class Session(Base):
     transcription = relationship("SessionTranscription", back_populates="session", uselist=False)
     insights = relationship("SessionInsight", back_populates="session", uselist=False)
     notes = relationship("ClientNote", back_populates="session")
+    uploads = relationship("SessionUpload", back_populates="session", cascade="all, delete-orphan")
     
     def __repr__(self):
         return f"<Session {self.title} - {self.status}>"
@@ -111,6 +128,36 @@ class SessionTranscription(Base):
     
     def __repr__(self):
         return f"<SessionTranscription for session {self.session_id}>"
+
+
+class SessionUpload(Base):
+    __tablename__ = "session_uploads"
+
+    id = Column(String, primary_key=True, default=lambda: str(uuid.uuid4()))
+    session_id = Column(String, ForeignKey("sessions.id", ondelete="CASCADE"), nullable=False)
+    
+    # Upload information
+    upload_type = Column(String, nullable=False)  # 'external', 'livekit', 'manual'
+    original_url = Column(String, nullable=True)
+    s3_key = Column(String, nullable=False, index=True)
+    file_size_bytes = Column(Integer, nullable=True)
+    mime_type = Column(String, nullable=True)
+    upload_status = Column(String, nullable=False, default="pending")  # pending, uploading, completed, failed
+    error_message = Column(Text, nullable=True)
+    
+    # Tracking
+    uploaded_by_user_id = Column(String, ForeignKey("users.id", ondelete="SET NULL"), nullable=True)
+    
+    # Timestamps
+    created_at = Column(DateTime, default=datetime.utcnow, nullable=False)
+    updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow, nullable=False)
+    
+    # Relationships
+    session = relationship("Session", back_populates="uploads")
+    uploaded_by = relationship("User")
+    
+    def __repr__(self):
+        return f"<SessionUpload {self.upload_type} - {self.upload_status}>"
 
 
 class SessionInsight(Base):

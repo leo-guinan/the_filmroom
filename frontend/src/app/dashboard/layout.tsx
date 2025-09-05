@@ -3,7 +3,7 @@
 import { useEffect, useState } from 'react'
 import { useRouter, usePathname } from 'next/navigation'
 import Link from 'next/link'
-import { Video, Calendar, Users, FileText, Settings, LogOut, Home, Menu, X } from 'lucide-react'
+import { Video, Calendar, Users, FileText, Settings, LogOut, Home, Menu, X, Film } from 'lucide-react'
 import { getApiUrl } from '@/lib/api'
 
 interface User {
@@ -90,6 +90,7 @@ export default function DashboardLayout({
     { name: 'Dashboard', href: '/dashboard', icon: Home },
     { name: 'Sessions', href: '/dashboard/sessions', icon: Video },
     ...(isCoach ? [
+      { name: 'Recordings', href: '/dashboard/coach/recordings', icon: Film },
       { name: 'Clients', href: '/dashboard/clients', icon: Users },
       { name: 'Reports', href: '/dashboard/reports', icon: FileText },
     ] : [
