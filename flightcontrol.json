@@ -1,5 +1,5 @@
 {
-  "$schema": "https://flightcontrol.dev/schema.json",
+"$schema": "https://app.flightcontrol.dev/schema.json",
   "environments": [
     {
       "id": "production",
@@ -94,14 +94,15 @@
           "envVariables": {
             "NEXT_PUBLIC_API_URL": "https://coachapi.leoasaservice.com"
           }
+        },
+        {
+          "id": "session-storage",
+          "name": "Session Storage",
+          "type": "s3",
+          "bucketNameBase": "filmroom-recordings"
         }
       ]
-    },
-    {
-      "id": "session-storage",
-      "name": "Session Storage",
-      "type": "s3",
-      "bucketNameBase": "filmroom-recordings"
     }
+    
   ]
 }
